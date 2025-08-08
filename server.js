@@ -25,6 +25,12 @@ app.get('/db-test', async (req, res) => {
   }
 });
 
+app.get('/users-test', async (req, res) => {
+  const users = await db('users').select('*');
+  res.json(users);
+});
+
+
 app.listen(PORT, ()=>{
   console.log(`SERVER running on port ${PORT}`);  
 })
