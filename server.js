@@ -1,18 +1,22 @@
 require('dotenv').config();
 const express = require('express');
+const cookieParser = require('cookie-parser')
 const db = require('./backend/src/db/db')
+const authRouter = require('./backend/src/routes/auth_router')
 
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
-
+app.use(cookieParser())
 
 // Test server connect
 app.get('/', (req, res)=> {
   res.send({message: "Server test running"})
 });
+
+app.use('/api/auth', authRouter)
 
 // Test db connect
 app.get('/db-test', async (req, res) => {
