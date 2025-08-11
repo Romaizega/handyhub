@@ -3,6 +3,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser')
 const db = require('./backend/src/db/db')
 const authRouter = require('./backend/src/routes/auth_router')
+const profileRouter = require('./backend/src/routes/profile_router')
 
 
 const app = express();
@@ -17,6 +18,7 @@ app.get('/', (req, res)=> {
 });
 
 app.use('/api/auth', authRouter)
+app.use('/api/profiles', profileRouter)
 
 // Test db connect
 app.get('/db-test', async (req, res) => {
