@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser')
 const db = require('./backend/src/db/db')
 const authRouter = require('./backend/src/routes/auth_router')
 const profileRouter = require('./backend/src/routes/profile_router')
+const jobRouter = require('./backend/src/routes/job_router')
 
 
 const app = express();
@@ -19,6 +20,7 @@ app.get('/', (req, res)=> {
 
 app.use('/api/auth', authRouter)
 app.use('/api/profiles', profileRouter)
+app.use('/api/jobs', jobRouter)
 
 // Test db connect
 app.get('/db-test', async (req, res) => {
