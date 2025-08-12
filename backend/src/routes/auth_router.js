@@ -4,7 +4,7 @@ const {
   login,
   me,
   logout,
-  refreshAccessToken
+  refreshAccessToken, 
 } = require('../controllers/auth_controller')
 const authenticateJWT = require('../middleware/auth_middware')
 

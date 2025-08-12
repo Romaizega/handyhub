@@ -205,6 +205,20 @@ const deleteJobController = async (req, res) => {
   }
 };
 
+const getJobsPagedController = async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(req.query.page) || 1;
+
+    const data = await jobsModel.getJobsPaged(limit, page);
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Get jobs paged error:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 
 module.exports = {
   getAllJobsController,
@@ -213,6 +227,7 @@ module.exports = {
   updateJobStatusController,
   deleteJobController,
   createJobController,
-  getJobsByClientIdController
+  getJobsByClientIdController,
+  getJobsPagedController
   
 }
