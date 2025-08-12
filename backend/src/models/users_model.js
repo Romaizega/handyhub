@@ -23,10 +23,39 @@ const createUser = async(username, email, passwordHash, role) => {
   return user
 }
 
+const getUsersPaged = async (limit, page, role) => {
+  const offset = (page - 1) * limit;
+
+  let query = db('users').select('id', 'email', 'role', 'created_at');
+
+  if (role) {
+    query = query.where({ role });
+  }
+
+  const users = await query
+    .orderBy('created_at', 'desc')
+    .limit(limit)
+    .offset(offset);
+
+  let countQuery = db('users').count('*');
+  if (role) {
+    countQuery = countQuery.where({ role });
+  }
+  const [{count}] = await countQuery;
+
+  return {
+    users,
+    total: Number(count),
+    page,
+    totalPages: Math.ceil(count / limit)
+  }
+}
+
 module.exports = {
   getUserById,
   getAllUsers,
   getUserByEmail,
   getUserByUsername,
-  createUser
+  createUser,
+  getUsersPaged
 }

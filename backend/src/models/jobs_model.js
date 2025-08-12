@@ -90,6 +90,26 @@ const updateJobStatus = async (id, status) => {
   return job;
 };
 
+
+const getJobsPaged = async (limit, page) => {
+  const offset = (page - 1) * limit;
+
+  const jobs = await db('jobs')
+    .select('*')
+    .orderBy('created_at', 'desc')
+    .limit(limit)
+    .offset(offset);
+
+  const [{ count }] = await db('jobs').count('*');
+
+  return {
+    jobs,
+    total: Number(count),
+    page,
+    totalPages: Math.ceil(count / limit)
+  };
+};
+
 module.exports = {
   getAllJobs,
   getJobById,
@@ -97,5 +117,6 @@ module.exports = {
   createJob,
   updateJob,
   updateJobStatus,
-  deleteJob
+  deleteJob,
+  getJobsPaged
 }
