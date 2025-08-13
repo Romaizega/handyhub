@@ -1,6 +1,7 @@
 const express = require('express');
 const {
   getJobsPagedController, 
+  getAllJobsController,
   getJobByIdController,
   updateJobController,
   updateJobStatusController,
@@ -14,6 +15,7 @@ const router = express.Router();
 
 // public list 
 router.get('/', getJobsPagedController);
+router.get('/jobs', getJobsPagedController);
 
 // private
 router.get('/myjob', authenticateJWT, getJobsByClientIdController);

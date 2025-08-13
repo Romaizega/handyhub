@@ -52,7 +52,7 @@ const createJobController = async (req, res) => {
   try {
     const userId = req.user.userId;
     const me = await userModel.getUserById(userId);
-    if (!me) return res.status(404).json({ message: "User not found"});
+    if (!me) return res.status(404).json({message: "User not found"});
     if (me.role !== 'client') {
       return res.status(403).json({message: "Only clients can create jobs"});
     }
