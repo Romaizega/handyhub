@@ -6,6 +6,7 @@ const authRouter = require('./backend/src/routes/auth_router')
 const profileRouter = require('./backend/src/routes/profile_router')
 const jobRouter = require('./backend/src/routes/job_router')
 const usersRouter = require('./backend/src/routes/users_router')
+const offerRouter = require('./backend/src/routes/offer_router')
 
 
 const app = express();
@@ -23,6 +24,7 @@ app.use('/api/auth', authRouter)
 app.use('/api/profiles', profileRouter)
 app.use('/api/jobs', jobRouter)
 app.use('/api/users', usersRouter)
+app.use('/api/offers', offerRouter)
 
 // Test db connect
 app.get('/db-test', async (req, res) => {
