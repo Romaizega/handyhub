@@ -150,10 +150,25 @@ const deleteProfileController = async(req, res) => {
   }
 };
 
+const getMyprofileController = async(req, res) => {
+  try {
+    const userId = req.user.userId
+    const profile = await profileModel.getProfileByUserId(userId)
+    if(!profile){
+      return res.status(404).json({message: "Profile not found"})
+    }
+    return res.status(200).json({message: "Profile: ", profile})
+  } catch (error) {
+    console.error("Get profile error:", error);
+    return res.status(500).json({ message: "Server error", error: error.message });
+  }
+}
+
 module.exports = {
   getAllProfiles,
   getProfileById,
   updateProfileController,
   createProfileController,
-  deleteProfileController
+  deleteProfileController,
+  getMyprofileController
 }

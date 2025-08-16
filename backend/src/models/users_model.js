@@ -26,7 +26,7 @@ const createUser = async(username, email, passwordHash, role) => {
 const getUsersPaged = async (limit, page, role) => {
   const offset = (page - 1) * limit;
 
-  let query = db('users').select('id', 'email', 'role', 'created_at');
+  let query = db('users').select('id','username', 'email', 'role', 'created_at');
 
   if (role) {
     query = query.where({ role });
