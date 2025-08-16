@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../app/axios";
 import { setCredentials, setUser, clearAuth } from "./authSlice";
+import { clearProfile } from "../profiles/profileSlice";
 
 
 const registerUser = createAsyncThunk(
@@ -21,8 +22,12 @@ const loginUser = createAsyncThunk(
   async ({username, password}, {dispatch, rejectWithValue}) => {
     try {
       const {data} = await api.post('/auth/login', {username, password})
+      console.log('login', data);
+      
       const {accessToken} = data
       dispatch(setCredentials({accessToken}))
+
+      dispatch(clearProfile())
       const me = await api.get('/auth/me')
       dispatch(setUser(me.data))
       return {accessToken}
@@ -41,9 +46,11 @@ const logoutUser = createAsyncThunk(
     try {
       await api.post('/auth/logout'), 
       dispatch(clearAuth())
+      dispatch(clearProfile())
       return true
     } catch (error) {
       dispatch(clearAuth())
+      dispatch(clearProfile())
       const message = error.response?.data?.message || error.message || 'Login failed'
       return rejectWithValue(message)
     }
