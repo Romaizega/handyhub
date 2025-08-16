@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../features/auth/authThunk";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate} from "react-router-dom";
 import { useState, useEffect } from "react";
 
 const Login = () => {
@@ -8,6 +8,7 @@ const Login = () => {
   const { isAuthenticated, status } = useSelector((state) => state.auth)
   const location = useLocation()
   const justRegistered = location.state?.justRegistered === true
+  const navigate = useNavigate()
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -19,12 +20,13 @@ const Login = () => {
     if (justRegistered) {
       const appear = setTimeout(() => setShowToast(true), 300);
       const disappear = setTimeout(() => setShowToast(false), 53000);
+      navigate(location.pathname, { replace: true, state: {} });
       return () => {
         clearTimeout(appear);
         clearTimeout(disappear);
       };
     }
-  }, [justRegistered]);
+  }, [justRegistered, navigate, location.pathname]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
