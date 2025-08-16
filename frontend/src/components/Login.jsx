@@ -19,7 +19,7 @@ const Login = () => {
   useEffect(() => {
     if (justRegistered) {
       const appear = setTimeout(() => setShowToast(true), 300);
-      const disappear = setTimeout(() => setShowToast(false), 53000);
+      const disappear = setTimeout(() => setShowToast(false), 5300);
       navigate(location.pathname, { replace: true, state: {} });
       return () => {
         clearTimeout(appear);
@@ -28,23 +28,34 @@ const Login = () => {
     }
   }, [justRegistered, navigate, location.pathname]);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    if (!username || !password) {
-      setError("Please fill in all the fields");
-      return;
-    }
-    setError("");
+const handleLogin = async (e) => {
+  e.preventDefault();
 
-    const result = await dispatch(loginUser({ username, password }));
-    if (loginUser.rejected.match(result)) {
-      setError(result.payload || "Enter error");
-    }
-  };
-
-  if (isAuthenticated) {
-    return <Navigate to="/home"/>;
+  if (!username || !password) {
+    setError("Please fill in all the fields");
+    return;
   }
+  setError("");
+
+  try {
+    const payload = await dispatch(loginUser({ username, password })).unwrap();
+    const role = payload?.user?.role ?? payload?.role;
+    const from = location.state?.from; 
+    const target =
+      from ??
+      (role === "client" ? "/my-jobs" : role === "worker" ? "/offers" : "/home");
+
+    navigate(target, { replace: true });
+  } catch (err) {
+    setError(String(err || "Enter error"));
+  }
+};
+
+
+if (isAuthenticated) {
+  const from = location.state?.from;
+  return <Navigate to={from || "/home"} replace />;
+}
 
   return (
 <>
