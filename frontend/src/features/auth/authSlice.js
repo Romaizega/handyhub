@@ -39,7 +39,7 @@ const authSlice = createSlice({
           state.error = null
         })
         .addCase(registerUser.fulfilled, (state)=>{
-          state.status = AUTH_STATUS.SUCCEEDED
+          state.status = AUTH_STATUS.SUCCEEDDED
         })
         .addCase(registerUser.rejected, (state, action)=>{
           state.status = AUTH_STATUS.FAILED
