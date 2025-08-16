@@ -35,4 +35,19 @@ const loginUser = createAsyncThunk(
   }
 )
 
-export {registerUser, loginUser}
+const logoutUser = createAsyncThunk(
+  'auth/logoutUser',
+  async (_, {dispatch, rejectWithValue}) => {
+    try {
+      await api.post('/auth/logout'), 
+      dispatch(clearAuth())
+      return true
+    } catch (error) {
+      dispatch(clearAuth())
+      const message = error.response?.data?.message || error.message || 'Login failed'
+      return rejectWithValue(message)
+    }
+  }
+)
+
+export {registerUser, loginUser, logoutUser}

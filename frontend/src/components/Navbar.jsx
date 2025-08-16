@@ -5,9 +5,8 @@ import {
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import api from '../app/axios'
-import { clearAuth } from '../features/auth/authSlice'
 import logo from '../assets/handyman.png'
+import { logoutUser } from '../features/auth/authThunk'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -20,13 +19,11 @@ export default function Navbar() {
   const isAuthed = Boolean(user && accessToken)
   const role = user?.role // 'client' | 'worker'
 
-  // Базовая навигация (видно всем)
   const baseNav = [
     { name: 'Home', to: '/', private: false },
     { name: 'Jobs', to: '/jobs', private: false },
   ]
 
-  // Приватные пункты по роли
   const roleNav = isAuthed
     ? role === 'client'
       ? [{ name: 'My Jobs', to: '/my-jobs', private: true }]
@@ -35,15 +32,9 @@ export default function Navbar() {
 
   const navigation = [...baseNav, ...roleNav]
 
-  const Logout = async () => {
-    try {
-      await api.post('/auth/logout');
-    } catch (err) {
-      console.error("Logout error:", err?.message || err);
-    } finally {
-      dispatch(clearAuth());
-      navigate('/login', { replace: true });
-    }
+  const Logout =  () => {
+    dispatch(logoutUser())
+    navigate('/')
   }
 
   return (
