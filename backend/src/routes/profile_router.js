@@ -9,14 +9,25 @@ const {
   
 } = require('../controllers/profile_controller')
 const authenticateJWT = require('../middleware/auth_middware')
+const {uploadAvatar} = require('../utils/upload')
 
 const router = express.Router();
 
 router.get('/', authenticateJWT, getAllProfiles)
 router.get('/me', authenticateJWT, getMyprofileController)
 router.get('/:id', authenticateJWT, getProfileById)
-router.post('/create', authenticateJWT, createProfileController)
-router.patch('/update', authenticateJWT, updateProfileController)
+router.post(
+  '/create',
+  authenticateJWT,
+  uploadAvatar.single('avatar'),
+  createProfileController
+)
+router.patch(
+  '/update',
+  authenticateJWT,
+  uploadAvatar.single('avatar'),
+  updateProfileController
+)
 router.delete('/delete',authenticateJWT, deleteProfileController)
 
 

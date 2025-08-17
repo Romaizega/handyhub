@@ -7,13 +7,16 @@ const profileRouter = require('./backend/src/routes/profile_router')
 const jobRouter = require('./backend/src/routes/job_router')
 const usersRouter = require('./backend/src/routes/users_router')
 const offerRouter = require('./backend/src/routes/offer_router')
+const path = require('path')
 
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')))
+app.use(express.urlencoded({ extended: true }))
 
 // Test server connect
 app.get('/', (req, res)=> {
