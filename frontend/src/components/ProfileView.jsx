@@ -33,7 +33,7 @@ const ProfileView = ({ profile = {}, role = 'client' }) => {
             <img
               src={profile.avatar_url || placeholder}
               alt={displayName}
-              className="w-16 h-16 rounded-full object-cover ring-1 ring-base-300"
+              className="w-64 h-64 rounded-full object-cover ring-1 ring-base-300"
             />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">

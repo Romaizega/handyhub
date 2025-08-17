@@ -94,47 +94,72 @@ const createProfileController = async(req, res) => {
 }
 
 const updateProfileController = async (req, res) => {
-  const userId = req.user.userId
-  const { display_name, city, about, avatar_url, skills, hourly_rate } = req.body
-
   try {
-    const me = await userModel.getUserById(userId)
-    if (!me) return res.status(404).json({ message: "User not found"});
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+
+    const {
+      display_name,
+      city,
+      about,
+      avatar_url: avatarUrlFromBody,
+      skills,           
+      hourly_rate        
+    } = req.body || {};
+
+    const me = await userModel.getUserById(userId);
+    if (!me) return res.status(404).json({ message: 'User not found' });
 
     if (display_name !== undefined && display_name.trim().length < 3) {
-      return res.status(400).json({ message: "display_name must be at least 3 characters"});
+      return res.status(400).json({ message: 'display_name must be at least 3 characters' });
     }
     if (city !== undefined && city.trim().length === 0) {
-      return res.status(400).json({ message: "city cannot be empty"});
+      return res.status(400).json({ message: 'city cannot be empty' });
     }
     if (me.role === 'worker') {
       if (skills !== undefined && typeof skills !== 'string') {
-        return res.status(400).json({ message: "skills must be a comma-separated string"});
+        return res.status(400).json({ message: 'skills must be a comma-separated string' });
       }
       if (hourly_rate !== undefined && (Number.isNaN(Number(hourly_rate)) || Number(hourly_rate) < 0)) {
-        return res.status(400).json({ message: "hourly_rate must be a non-negative number"})
+        return res.status(400).json({ message: 'hourly_rate must be a non-negative number' });
       }
-    } else if (me.role === 'client') {
     }
 
-    const profile = await profileModel.updateProfile(
+
+    const storedPath = req.file ? `/uploads/avatars/${req.file.filename}` : null;
+    const nextAvatarUrl = storedPath ?? (avatarUrlFromBody || null);
+    const rate = (hourly_rate === '' || hourly_rate == null) ? null : Number(hourly_rate);
+
+    const updated = await profileModel.updateProfile(
       userId,
       display_name,
       city,
       about,
-      avatar_url,
-      me.role === 'worker' ? skills : undefined,
-      me.role === 'worker' ? hourly_rate : undefined
+      nextAvatarUrl,                                  
+      me.role === 'worker' ? skills : undefined,      
+      me.role === 'worker' ? rate : undefined
     );
 
-    if (!profile) return res.status(404).json({ message: "Profile not found"})
+    if (!updated) return res.status(404).json({ message: 'Profile not found' });
 
-    return res.status(200).json({ profile })
+    const publicBase =
+      process.env.PUBLIC_BASE_URL || `${req.protocol}://${req.get('host')}`;
+
+    const profileForClient = {
+      ...updated,
+      avatar_url: updated.avatar_url
+        ? (updated.avatar_url.startsWith('http')
+            ? updated.avatar_url
+            : `${publicBase}${updated.avatar_url}`)
+        : null
+    };
+
+    return res.status(200).json({ profile: profileForClient });
   } catch (error) {
-    console.error('Update profile error:', error)
-    return res.status(500).json({ message: "Server error", error: error.message })
+    console.error('Update profile error:', error);
+    return res.status(500).json({ message: 'Server error', error: error.message });
   }
-}
+};
 
 const deleteProfileController = async(req, res) => {
   const userId = req.user.userId;
