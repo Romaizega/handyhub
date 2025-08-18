@@ -6,8 +6,17 @@ const getAllJobs = () => {
 }
 
 const getJobById = (id) => {
-  return db('jobs').where({id}).first()
-}
+  return db('jobs')
+    .join('profiles', 'profiles.id', '=', 'jobs.client_id')
+    .join('users', 'profiles.user_id', '=', 'users.id')
+    .select(
+      'jobs.*',
+      'profiles.user_id as client_user_id',
+      'users.email as client_email'
+    )
+    .where('jobs.id', id)
+    .first();
+};
 
 const getJobsByClientId = (client_id) => {
   return db('jobs').where({client_id}).orderBy('created_at', 'desc');
@@ -22,15 +31,14 @@ const createJob = async (
   budget,
   due_date
 ) => {
-
   const [job] = await db('jobs')
     .insert({
       client_id,
       title,
       description,
       photos: photos == null
-      ?null
-      :JSON.stringify(Array.isArray(photos) ? photos: [String[photos]]),
+      ? null
+      : JSON.stringify(Array.isArray(photos) ? photos : [String(photos)]),
       status,
       budget,
       due_date
@@ -49,31 +57,26 @@ const updateJob = async (
   budget,
   due_date
 ) => {
-  const update = {}
-
-  if (title !== undefined) 
-    update.title = title;
+  const update = { updated_at: db.fn.now() };
+  if (title !== undefined)
+     update.title = title;
   if (description !== undefined)
-    update.description = description;
-  if (photos !== undefined)
-    update.photos = photos == null
-      ? null
-      : JSON.stringify(Array.isArray(photos) ? photos: [String[photos]]);
-  if (status !== undefined)
+     update.description = description;
+  if (photos !== undefined) 
+    update.photos = JSON.stringify(Array.isArray(photos) ? photos : [String(photos)])
+  if (status !== undefined) 
     update.status = status;
-  if (budget !== undefined)
+  if (budget !== undefined) 
     update.budget = budget;
-  if (due_date !== undefined)
+  if (due_date !== undefined) 
     update.due_date = due_date;
-  update.updated_at = db.fn.now();
 
   const [job] = await db('jobs')
-    .where({id})
+    .where({ id })
     .update(update)
     .returning('*');
-
   return job;
-}
+};
 
 const deleteJob = (id) => {
   return db('jobs').where({id}).del()

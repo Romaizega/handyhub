@@ -13,6 +13,9 @@ import JobOffer from './components/JobOffer'
 import ProfileEdit from './components/ProfileEditPage'
 import ProfilePage from './components/ProfilePage'
 import ProfileCreate from './components/ProfileCreate'
+import JobCreate from './components/JobCreate'
+import JobEdit from './components/JobEdit'
+import PublicProfileView from './components/PublicProfileView'
 
 function App() {
  
@@ -25,6 +28,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/public-profiles/:id" element={<PublicProfileView />} />
 
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/jobs/:id" element={<JobDetails />} />
@@ -79,6 +83,25 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/jobs/create"
+          element={
+            <RoleRoute allowed={['client']}>
+              <JobCreate />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/jobs/:id/edit"
+          element={
+            <RoleRoute allowed={['client']}>
+              <JobEdit />
+            </RoleRoute>
+          }
+        />
+
+
       </Routes>
       </div>
     </>

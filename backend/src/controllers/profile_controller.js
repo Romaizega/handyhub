@@ -29,6 +29,30 @@ const getProfileById = async(req, res) =>{
 }
 
 
+const getProfileByUserIdpublic = async (req, res) => {
+  const { id } = req.params;
+  console.log("received GET /profiles/by-user/:id =", id);
+
+  try {
+    const profile = await profileModel.getProfileByUserId(id);
+    console.log("profileModel.getProfileByUserId →", profile);
+
+    const user = await userModel.getUserById(id);
+    console.log("userModel.getUserById →", user);
+
+    if (!profile || !user) {
+      console.log("→ 404: Profile or user not found");
+      return res.status(404).json({ message: "Profile or user not found" });
+    }
+
+    res.json({ profile, user });
+  } catch (err) {
+    console.error("Error fetching public profile:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+
 const createProfileController = async(req, res) => {
   const userId = req.user.userId
   const {
@@ -195,5 +219,6 @@ module.exports = {
   updateProfileController,
   createProfileController,
   deleteProfileController,
-  getMyprofileController
+  getMyprofileController,
+  getProfileByUserIdpublic
 }
