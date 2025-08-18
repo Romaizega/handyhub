@@ -10,9 +10,17 @@ const getOfferById = (id) => {
 }
 
 const getOffersByJobId = (jobId) => {
-  return db('offers').where({job_id: jobId}).orderBy('created_at', 'desc')
+  return db('offers')
+    .join('profiles', 'offers.worker_profile_id', 'profiles.id')
+    .join('users', 'profiles.user_id', 'users.id')
+    .select(
+      'offers.*',
+      'users.id as worker_user_id',
+      'users.username as worker_username'
+    )
+    .where('offers.job_id', jobId)
+    .orderBy('offers.created_at', 'desc');
 }
-
 
 const createOffer = async (
   job_id,

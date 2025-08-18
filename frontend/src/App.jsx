@@ -16,6 +16,7 @@ import ProfileCreate from './components/ProfileCreate'
 import JobCreate from './components/JobCreate'
 import JobEdit from './components/JobEdit'
 import PublicProfileView from './components/PublicProfileView'
+import OfferCreate from './components/OfferCreate'
 
 function App() {
  
@@ -100,8 +101,8 @@ function App() {
             </RoleRoute>
           }
         />
-
-
+        <Route path="/offers/create" element={<OfferCreate />} />
+        {/* <Route path="/jobs/:id/offers" element={<JobOffer />} /> */}
       </Routes>
       </div>
     </>

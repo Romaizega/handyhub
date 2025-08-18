@@ -5,7 +5,8 @@ const {
   createOfferController,
   deleteOfferController,
   updateOfferStatusController,
-  updateOfferController
+  updateOfferController,
+  getOffersByJobController
 } = require('../controllers/offer_controller')
 const authenticateJWT = require('../middleware/auth_middware');
 
@@ -17,5 +18,7 @@ router.post('/', authenticateJWT, createOfferController)
 router.delete('/:id', authenticateJWT, deleteOfferController)
 router.patch('/:id', authenticateJWT, updateOfferController)
 router.patch('/:id/status', authenticateJWT, updateOfferStatusController)
+router.get('/by-job/:jobId', authenticateJWT, getOffersByJobController)
+
 
 module.exports = router
