@@ -45,7 +45,7 @@ const JobDetails = () => {
         </div>
       )}
       <Link
-        to={`/public-profiles/${job.client_user_id}`}
+        to={`/public-profiles/${job.client_user_id}?job=${job.id}`}
         className="btn btn-sm btn-outline mt-4"
       >
         View Client Profile

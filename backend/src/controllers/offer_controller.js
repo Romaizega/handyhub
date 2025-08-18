@@ -201,7 +201,35 @@ const updateOfferStatusController = async (req, res) => {
     console.error("Update offer status error:", error.message);
     return res.status(500).json({message: "Server error", error: error.message});
   }
-};
+}
+
+const getOffersByJobController = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+    const userId = req.user.userId;
+    console.log("Job fetch for userId:", userId);
+
+    const job = await jobsModel.getJobById(jobId);
+    console.log("Job.client_id profile ID? actual value:", job.client_id);
+
+    const profile = await profileModel.getProfileByUserId(userId);
+    console.log("Your profile.id:", profile?.id);
+
+    if (!job) return res.status(404).json({ message: "Job not found" });
+    if (!profile || job.client_id !== profile.id) {
+      return res
+        .status(403)
+        .json({ message: "You can view offers only for your jobs" });
+    }
+
+    const offers = await offerModel.getOffersByJobId(jobId);
+    return res.json({ offers });
+  } catch (error) {
+    console.error("Error loading offers by job:", error.message);
+    return res.status(500).json({ message: "Server error", error: error.message})
+  }
+}
+
 
 module.exports = {
   getAllOfferController,
@@ -209,6 +237,7 @@ module.exports = {
   createOfferController,
   deleteOfferController,
   updateOfferStatusController,
-  updateOfferController
+  updateOfferController,
+  getOffersByJobController
 
 }
