@@ -1,7 +1,8 @@
 const profileModel = require('../models/profile_models')
 const userModel = require('../models/users_model')
 const jobsModel = require('../models/jobs_model')
-
+const fs = require('fs');
+const path = require('path')
 
 const getAllJobsController = async(req, res) => {
   try {
@@ -52,7 +53,7 @@ const createJobController = async (req, res) => {
   try {
     const userId = req.user.userId;
     const me = await userModel.getUserById(userId);
-    if (!me) return res.status(404).json({message: "User not found"});
+    if (!me) return res.status(404).json({ message: "User not found"});
     if (me.role !== 'client') {
       return res.status(403).json({message: "Only clients can create jobs"});
     }
@@ -62,6 +63,9 @@ const createJobController = async (req, res) => {
     }
 
     const { title, description, photos, budget, due_date, status } = req.body;
+    const uploadedFiles = req.files || []
+    const photoNames = uploadedFiles.map(f => `/uploads/jobs/${f.filename}`)
+
 
     if (!title || title.trim().length < 3) {
       return res.status(400).json({message: "title must be at least 3 characters"});
@@ -76,7 +80,6 @@ const createJobController = async (req, res) => {
       }
     }
 
-    const photosJson = Array.isArray(photos) ? photos : null;
     const allowedStatuses = ['open', 'in_progress', 'done', 'cancelled'];
     const safeStatus = status && allowedStatuses.includes(status) ? status : 'open';
 
@@ -84,15 +87,15 @@ const createJobController = async (req, res) => {
       profile.id,    
       title.trim(),
       description.trim(),
-      photosJson,
+      photoNames,
       safeStatus,
       budget ?? null,
       due_date ?? null
-    );
+    )
 
     return res.status(201).json({message: "Job created", job });
   } catch (error) {
-    console.error("Create job error:", error.message);
+    console.error("Create job error:", error);
     return res.status(500).json({message: "Server error", error: error.message });
   }
 };
@@ -103,47 +106,70 @@ const updateJobController = async (req, res) => {
     const { id } = req.params;
 
     const me = await userModel.getUserById(userId);
-    if (!me) return res.status(404).json({message: "User not found"});
+    if (!me) return res.status(404).json({ message: "User not found" });
     if (me.role !== 'client') {
-      return res.status(403).json({message: "Only clients can update their jobs"});
+      return res.status(403).json({ message: "Only clients can update jobs" });
     }
+
+    const profile = await profileModel.getProfileByUserId(userId);
+    if (!profile) return res.status(404).json({ message: "Profile not found" });
 
     const existing = await jobsModel.getJobById(id);
-    if (!existing) return res.status(404).json({ message: "Job not found"});
-    if (existing.client_id !== userId) {
-      return res.status(403).json({message: "You can update only your own jobs"});
+    if (!existing) return res.status(404).json({ message: "Job not found" });
+    if (existing.client_id !== profile.id) {
+      return res.status(403).json({ message: "You can only update your own jobs" });
     }
 
-    const { title, description, photos, status, budget, due_date } = req.body;
+    const { title, description, status, budget, due_date } = req.body;
 
-    if (title !== undefined && title.trim().length < 3) {
-      return res.status(400).json({message: "title must be at least 3 characters"});
+    // validation
+    if (title && title.trim().length < 3) {
+      return res.status(400).json({ message: "Title must be at least 3 characters" });
     }
-    if (description !== undefined && description.trim().length < 10) {
-      return res.status(400).json({message: "description must be at least 10 characters"});
+    if (description && description.trim().length < 10) {
+      return res.status(400).json({ message: "Description must be at least 10 characters" });
     }
     if (budget !== undefined) {
       const b = Number(budget);
-      if (Number.isNaN(b) || b < 0) {
-        return res.status(400).json({message: "budget must be a non-negative number"});
+      if (isNaN(b) || b < 0) {
+        return res.status(400).json({ message: "Budget must be a non-negative number" });
       }
     }
-    const photosJson = Array.isArray(photos) ? photos : undefined;
 
-    const job = await jobsModel.updateJob(
+    // parse existingPhotos safely
+    const raw = req.body.existingPhotos;
+    const existingPhotos = Array.isArray(raw) ? raw : raw ? [raw] : [];
+
+    const uploadedFiles = req.files || [];
+    const newPhotoPaths = uploadedFiles.map(f => `/uploads/jobs/${f.filename}`);
+
+    // delete removed old photos
+    const toDelete = (existing.photos || []).filter(p => !existingPhotos.includes(p));
+    for (const photoPath of toDelete) {
+      const absPath = path.join(process.cwd(), photoPath);
+      fs.unlink(absPath, err => {
+        if (err) console.error("Failed to delete:", absPath, err.message);
+      });
+    }
+
+    // ensure finalPhotos is a valid array of strings
+    const finalPhotos = [...existingPhotos, ...newPhotoPaths].filter(p => typeof p === 'string');
+
+    const updated = await jobsModel.updateJob(
       id,
-      title,
-      description,
-      photosJson,
+      title?.trim(),
+      description?.trim(),
+      finalPhotos,
       status,
-      budget,
-      due_date
+      budget ?? null,
+      due_date ?? null
     );
 
-    return res.status(200).json({message: "Job updated", job});
+    return res.status(200).json({ message: "Job updated", job: updated });
+
   } catch (error) {
     console.error("Update job error:", error.message);
-    return res.status(500).json({message: "Server error", error: error.message});
+    return res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -184,26 +210,32 @@ const deleteJobController = async (req, res) => {
     const { id } = req.params;
 
     const me = await userModel.getUserById(userId);
-    if (!me) return res.status(404).json({message: "User not found"});
+    if (!me) return res.status(404).json({ message: "User not found" });
     if (me.role !== 'client') {
-      return res.status(403).json({message: "Only clients can delete their jobs"});
+      return res.status(403).json({ message: "Only clients can delete their jobs" });
     }
+
+    const profile = await profileModel.getProfileByUserId(userId);
+    if (!profile) return res.status(404).json({ message: "Profile not found" });
+
     const job = await jobsModel.getJobById(id);
-    if (!job) return res.status(404).json({message: "Job not found"});
-    if (job.client_id !== userId) {
-      return res.status(403).json({message: "You can delete only your own jobs"});
+    if (!job) return res.status(404).json({ message: "Job not found" });
+
+    if (job.client_id !== profile.id) {
+      return res.status(403).json({ message: "You can delete only your own jobs" });
     }
 
     const deleted = await jobsModel.deleteJob(id);
     if (deleted === 0) {
-      return res.status(404).json({message: "Job not found"});
+      return res.status(404).json({ message: "Job not found" });
     }
-    return res.status(200).json({message: "Job deleted successfully"});
+
+    return res.status(200).json({ message: "Job deleted successfully" });
   } catch (error) {
     console.error("Delete job error:", error.message);
-    return res.status(500).json({message: "Server error", error: error.message });
+    return res.status(500).json({ message: "Server error", error: error.message });
   }
-};
+}
 
 const getJobsPagedController = async (req, res) => {
   try {
