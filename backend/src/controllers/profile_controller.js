@@ -41,17 +41,29 @@ const getProfileByUserIdpublic = async (req, res) => {
     console.log("userModel.getUserById →", user);
 
     if (!profile || !user) {
-      console.log("→ 404: Profile or user not found");
       return res.status(404).json({ message: "Profile or user not found" });
     }
 
-    res.json({ profile, user });
-  } catch (err) {
-    console.error("Error fetching public profile:", err);
-    res.status(500).json({ message: "Server error", error: err.message });
+    res.status(200).json({ message: "Profile and user", profile, user })
+  } catch (error) {
+    console.error("Error fetching public profile:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
-};
+}
 
+const getProfilesWorkerPublic = async (req, res) => {
+  try {
+    const profiles = await profileModel.getAllProfiles();
+    const workerProfiles = profiles.filter(profile => profile.role === 'worker');
+
+    if (!workerProfiles || workerProfiles.length === 0) {
+      return res.status(404).json({ message: "No worker profiles found" })
+    }
+    res.status(200).json({ message: "Worker profiles", profiles: workerProfiles })
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message })
+  }
+}
 
 const createProfileController = async(req, res) => {
   const userId = req.user.userId
@@ -220,5 +232,6 @@ module.exports = {
   createProfileController,
   deleteProfileController,
   getMyprofileController,
-  getProfileByUserIdpublic
+  getProfileByUserIdpublic,
+  getProfilesWorkerPublic,
 }

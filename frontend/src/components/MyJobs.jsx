@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router-dom"
-import { getMyJobs } from "../features/jobs/jobThunk"
+import { getMyJobs, updateJobStatus } from "../features/jobs/jobThunk"
 import { AUTH_STATUS } from "../features/auth/authConstants"
 
 const MyJobs = () => {
@@ -14,6 +14,19 @@ const MyJobs = () => {
       dispatch(getMyJobs())
     }
   }, [status, dispatch])
+
+  const handleStatusChange = (jobId, currentStatus, newStatus) => {
+    if (currentStatus === newStatus) return
+    const confirmed = window.confirm(`Are you sure you want to change status to "${newStatus}"?`)
+    if (!confirmed) return
+
+    dispatch(updateJobStatus({ id: jobId, status: newStatus }))
+      .unwrap()
+      .then(() => dispatch(getMyJobs()))
+      .catch((err) =>
+        alert(typeof err === "string" ? err : err.message || "Failed to change status")
+      )
+  }
 
   if (status === AUTH_STATUS.LOADING) {
     return (
@@ -81,7 +94,17 @@ const MyJobs = () => {
                 <div className="card-body gap-3">
                   <div className="flex items-start justify-between gap-3">
                     <h3 className="card-title text-lg">{title}</h3>
-                    <span className="badge badge-outline capitalize">{job.status}</span>
+                    <select
+                      value={job.status}
+                      onChange={(e) => handleStatusChange(job.id, job.status, e.target.value)}
+                      className="select select-sm select-bordered"
+                      disabled={status === AUTH_STATUS.LOADING}
+                    >
+                      <option value="open">Open</option>
+                      <option value="in_progress">In Progress</option>
+                      <option value="done">Done</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
                   </div>
                   <p className="text-base-content/70">{desc}</p>
                   <div className="grid sm:grid-cols-3 gap-3 text-sm">
@@ -95,7 +118,6 @@ const MyJobs = () => {
                     </div>
                   </div>
 
-                  {/* Photos */}
                   {Array.isArray(job.photos) && job.photos.length > 0 && (
                     <div className="mt-3">
                       <h4 className="text-sm font-semibold text-base-content/70 mb-2">
@@ -142,7 +164,6 @@ const MyJobs = () => {
         </div>
       )}
 
-      {/* Modal preview */}
       {selectedPhoto && (
         <dialog open className="modal">
           <div className="modal-box max-w-3xl">

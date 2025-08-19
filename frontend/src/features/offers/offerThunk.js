@@ -4,11 +4,11 @@ import api from "../../app/axios";
 
 const getMyOffer = createAsyncThunk(
   'offers/getMyoffer',
-  async (_, {rejectWithValue}) => {
+  async (id, {rejectWithValue}) => {
     try {
-      const {data} = await api.get('/offers/')
+      const {data} = await api.get(`/offers/${id}`)
       console.log("data offer", data);
-      return data.jobs
+      return data.offer
       
     } catch (error) {
       const status = error.response?.status
@@ -22,9 +22,9 @@ const getAllOffers = createAsyncThunk(
   'offer/getAllOffers',
   async (_, {rejectWithValue}) => {
     try {
-      const {data} = await api.get('/offers')
+      const {data} = await api.get('/offers/')
       console.log("data offer", data);
-      return data.jobs
+      return data.offers
       
     } catch (error) {
       const status = error.response?.status
@@ -48,7 +48,11 @@ const createOffer = createAsyncThunk(
       return data.offer
     } catch (error) {
       const message = error.response?.data?.message || error.message || 'Creating offer failed'
-      return rejectWithValue(message)
+      let messageFront = message
+      if (messageFront.toLowerCase().includes('unique') || messageFront.toLowerCase().includes('duplicate')) {
+        messageFront = 'You have already submitted an offer for this job.';
+      }
+      return rejectWithValue(messageFront)
     }
   }
 )
@@ -92,7 +96,7 @@ const updateOfferStatus = createAsyncThunk(
       const {data} = await api.patch(`/offers/${id}/status/`, {
     status,
     })
-    return data.job
+    return data.offer
     } catch (error) {
       const message = error.response?.data?.message || error.message || 'Updating offer status failed'
       return rejectWithValue(message)

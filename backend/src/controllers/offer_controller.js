@@ -6,13 +6,19 @@ const jobsModel = require('../models/jobs_model')
 
 const getAllOfferController = async (req, res) => {
   try {
-    const offers =  await offerModel.getAllOffers()
-    if(offers.length < 1){
-      res.status(400).json({message: "Offer list is empty"})
+    const userId = req.user.userId;
+
+    const me = await userModel.getUserById(userId);
+    if (!me || me.role !== 'worker') {
+      return res.status(403).json({ message: "Only workers can view their offers" });
     }
-  } catch (error) {
-    console.error("Get all offers error: ", error);
-    res.status(500).json({message: "Server error", error: error.message})
+
+    const offers = await offerModel.getAllOffers(userId);
+    res.json({ offers });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 }
 
@@ -170,36 +176,46 @@ const deleteOfferController = async (req, res) => {
 const updateOfferStatusController = async (req, res) => {
   try {
     const userId = req.user.userId;
+
     const me = await userModel.getUserById(userId);
-    if (!me) return res.status(404).json({message: "User not found"})
+    if (!me) return res.status(404).json({ message: "User not found" });
+
     if (me.role !== 'client') {
-      return res.status(403).json({message: "Only clients can change offer status"})
+      return res.status(403).json({ message: "Only clients can change offer status" });
     }
 
-    const { id } = req.params
-    const offer = await offerModel.getOfferById(id)
-    if (!offer) return res.status(404).json({message: "Offer not found"})
-
-    const job = await jobsModel.getJobById(offer.job_id)
-    if (!job) return res.status(404).json({message: "Job not found"})
-    if (job.client_id !== userId) {
-      return res.status(403).json({message: "You can update offers only for your jobs"});
+    const clientProfile = await profileModel.getProfileByUserId(userId);
+    if (!clientProfile) {
+      return res.status(404).json({ message: "Client profile not found" });
     }
 
-    const { status } = req.body
-    const allowedStatuses = ['pending', 'accepted', 'rejected']
+    const { id } = req.params;
+    const offer = await offerModel.getOfferById(id);
+    if (!offer) return res.status(404).json({ message: "Offer not found" });
+
+    const job = await jobsModel.getJobById(offer.job_id);
+    if (!job) return res.status(404).json({ message: "Job not found" });
+
+    if (job.client_id !== clientProfile.id) {
+      return res.status(403).json({ message: "You can update offers only for your jobs" });
+    }
+
+    const { status } = req.body;
+    const allowedStatuses = ['pending', 'accepted', 'rejected'];
+
     if (!status || !allowedStatuses.includes(status)) {
       return res.status(400).json({
         message: 'Invalid status',
-        allowed: allowedStatuses
+        allowed: allowedStatuses,
       })
     }
 
-    const updated = await offerModel.updateOfferStatus(id, status)
-    return res.status(200).json({message: "Offer status updated", offer: updated})
+    const updated = await offerModel.updateOfferStatus(id, status);
+    return res.status(200).json({ message: "Offer status updated", offer: updated });
+
   } catch (error) {
     console.error("Update offer status error:", error.message);
-    return res.status(500).json({message: "Server error", error: error.message});
+    return res.status(500).json({ message: "Server error", error: error.message });
   }
 }
 
