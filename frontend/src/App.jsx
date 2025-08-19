@@ -17,6 +17,8 @@ import JobCreate from './components/JobCreate'
 import JobEdit from './components/JobEdit'
 import PublicProfileView from './components/PublicProfileView'
 import OfferCreate from './components/OfferCreate'
+import OfferDetails from './components/OfferDetails'
+import WorkersList from './components/WorkersList'
 
 function App() {
  
@@ -30,6 +32,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/public-profiles/:id" element={<PublicProfileView />} />
+        <Route path="/workers" element={<WorkersList />} />
 
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/jobs/:id" element={<JobDetails />} />
@@ -56,6 +59,14 @@ function App() {
           element={
             <RoleRoute allowed={['worker']}>
               <MyOffers />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/offers/:id"
+          element={
+            <RoleRoute allowed={['worker']}>
+              <OfferDetails />
             </RoleRoute>
           }
         />

@@ -69,17 +69,12 @@ const offerSlice = createSlice ({
         state.error = action.payload || "Failed to update offer"
       })
 
-      .addCase(updateOfferStatus.pending, (state)=>{
-        state.status = AUTH_STATUS.LOADING
-        state.error = null
+      .addCase(updateOfferStatus.pending, (state) => {
+        state.status = AUTH_STATUS.LOADING;
       })
-      .addCase(updateOfferStatus.fulfilled, (state, action)=>{
-        state.status = AUTH_STATUS.SUCCEEDDED
-        state.offers = action.payload
-      })
-      .addCase(updateOfferStatus.rejected, (state, action)=>{
-        state.offers = AUTH_STATUS.FAILED
-        state.error = action.payload || "Failed to update offer status"
+      .addCase(updateOfferStatus.rejected, (state, action) => {
+        state.status = AUTH_STATUS.FAILED;
+        state.error = action.payload;
       })
 
       .addCase(deleteOffer.pending, (state)=>{

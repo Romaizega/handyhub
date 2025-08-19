@@ -1,9 +1,14 @@
 const db = require('../db/db')
 
 
-const getAllOffers = () => {
-  return db('offers').select('*').orderBy('created_at', 'desc')
+const getAllOffers = (userId) => {
+  return db('offers')
+    .join('profiles', 'offers.worker_profile_id', 'profiles.id')
+    .where('profiles.user_id', userId)
+    .select('offers.*')
+    .orderBy('offers.created_at', 'desc');
 }
+
 
 const getOfferById = (id) => {
   return db('offers').where({id}).first()

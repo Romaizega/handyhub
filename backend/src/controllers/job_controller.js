@@ -185,9 +185,11 @@ const updateJobStatusController = async (req, res) => {
       return res.status(403).json({message: "Only clients can change job status"});
     }
 
+    const profile = await profileModel.getProfileByUserId(userId);
+    if (!profile) return res.status(404).json({ message: "Profile not found" })
     const job = await jobsModel.getJobById(id);
     if (!job) return res.status(404).json({message: "Job not found"});
-    if (job.client_id !== userId) {
+    if (job.client_id !== profile.id) {
       return res.status(403).json({message: "You can change status only for your jobs"});
     }
 

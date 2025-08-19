@@ -5,7 +5,9 @@ import api from '../app/axios'
 const JobDetails = () => {
   const { id } = useParams()
   const [job, setJob] = useState(null)
-  const [error, setError] = useState("")  
+  const [error, setError] = useState("")
+  const [selectedPhoto, setSelectedPhoto] = useState(null)
+
   
   useEffect(() => {
     const fetch = async () => {
@@ -32,18 +34,46 @@ const JobDetails = () => {
         <p><strong>Due:</strong> {new Date(job.due_date).toLocaleDateString()}</p>
         <p><strong>Created:</strong> {new Date(job.created_at).toLocaleDateString()}</p>
       </div>
-      {job.photos?.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          {job.photos.map((url, idx) => (
-            <img
-            key={idx}
-            src={url}
-            alt={`photo-${idx}`}
-            className="w-full h-32 object-cover rounded shadow"
-            />
-          ))}
+      {Array.isArray(job.photos) && job.photos.length > 0 && (
+        <div className="mt-3">
+          <h4 className="text-sm font-semibold text-base-content/70 mb-2">
+            Attached photos:
+          </h4>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {job.photos.slice(0, 4).map((photo, idx) => (
+              <img
+                key={idx}
+                src={photo}
+                loading="lazy"
+                alt={`job photo ${idx + 1}`}
+                className="w-full h-90 object-cover rounded cursor-pointer hover:opacity-90 transition"
+                onClick={() => setSelectedPhoto(photo)}
+              />
+            ))}
+      {selectedPhoto && (
+        <dialog open className="modal">
+        <div className="modal-box max-w-3xl">
+        <img
+          src={selectedPhoto}
+          alt="Selected photo"
+          className="w-full h-[70vh] object-contain rounded"
+          />
+        <div className="modal-action">
+          <button onClick={() => setSelectedPhoto(null)} className="btn">
+            Close
+          </button>
+            </div>
         </div>
+        </dialog>
       )}
+    </div>
+    {job.photos.length > 4 && (
+        <p className="text-sm mt-1 text-blue-500">
+        +{job.photos.length - 4} more
+          </p>
+        )}
+      </div>
+    )}
       <Link
         to={`/public-profiles/${job.client_user_id}?job=${job.id}`}
         className="btn btn-sm btn-outline mt-4"

@@ -33,10 +33,17 @@ const PublicProfileView = () => {
   return (
     <div className="max-w-xl mx-auto p-4 bg-white rounded shadow">
       <h1 className="text-2xl font-bold mb-2">{profile.display_name}</h1>
+      {profile.avatar_url && (
+        <img
+          src={profile.avatar_url}
+          alt="Avatar"
+          className="w-32 h-32 rounded-full mt-4 object-cover"
+        />
+      )}
       <p className="text-gray-600"><strong>Role:</strong> {userData.role}</p>
 
       {profile.about && (
-        <p className="text-gray-600 mt-2">{profile.about}</p>
+        <p className="text-gray-600 mt-2"><strong>About: </strong>{profile.about}</p>
       )}
       {profile.city && (
         <p className="text-gray-600 mt-2"><strong>City:</strong> {profile.city}</p>
@@ -46,13 +53,6 @@ const PublicProfileView = () => {
       )}
       {profile.hourly_rate && (
         <p className="text-gray-600 mt-2"><strong>Hourly Rate:</strong> ${profile.hourly_rate}</p>
-      )}
-      {profile.avatar_url && (
-        <img
-          src={profile.avatar_url}
-          alt="Avatar"
-          className="w-32 h-32 rounded-full mt-4 object-cover"
-        />
       )}
 
       {isWorker && jobId && (

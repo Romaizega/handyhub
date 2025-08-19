@@ -6,7 +6,8 @@ const {
   updateProfileController,
   deleteProfileController,
   getMyprofileController,
-  getProfileByUserIdpublic
+  getProfilesWorkerPublic,
+  getProfileByUserIdpublic,
   
 } = require('../controllers/profile_controller')
 const authenticateJWT = require('../middleware/auth_middware')
@@ -16,6 +17,7 @@ const router = express.Router();
 
 router.get('/', authenticateJWT, getAllProfiles)
 router.get('/me', authenticateJWT, getMyprofileController)
+router.get('/workers', getProfilesWorkerPublic)
 router.get('/:id', authenticateJWT, getProfileById)
 router.get('/by-user/:id', getProfileByUserIdpublic)
 

@@ -13,7 +13,8 @@ const authenticateJWT = require('../middleware/auth_middware');
 
 const router = express.Router()
 
-router.get('/',authenticateJWT, getOfferByIdController )
+router.get('/:id',authenticateJWT, getOfferByIdController )
+router.get('/',authenticateJWT, getAllOfferController )
 router.post('/', authenticateJWT, createOfferController)
 router.delete('/:id', authenticateJWT, deleteOfferController)
 router.patch('/:id', authenticateJWT, updateOfferController)

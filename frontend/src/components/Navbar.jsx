@@ -23,12 +23,13 @@ export default function Navbar() {
   const baseNav = [
     { name: 'Home', to: '/', private: false },
     { name: 'Jobs', to: '/jobs', private: false },
+    { name: 'Workers', to: '/workers', private: false },
   ]
 
   const roleNav = isAuthed
     ? role === 'client'
       ? [{ name: 'My Jobs', to: '/my-jobs', private: true }]
-      : [{ name: 'Offers', to: '/offers', private: true }]
+      : [{ name: 'Offers', to: '/my-offers', private: true }]
     : []
 
   const navigation = [...baseNav, ...roleNav]
