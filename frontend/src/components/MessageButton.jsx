@@ -7,7 +7,7 @@ const MessageButton = ({
   profileId,        
   workerUserId,      
   myProfileId,      
-  className = 'btn btn-sm btn-primary',
+  className = 'btn btn-sm btn-neutral',
   children = 'Message',
   showDisabledWhileLoading = true, 
 }) => {
