@@ -3,6 +3,8 @@ import authReducer from '../features/auth/authSlice'
 import profileReducer from '../features/profiles/profileSlice'
 import jobReducer from '../features/jobs/jobSlice'
 import offerReducer from '../features/offers/offerSlice'
+import messageRudercer from '../features/messages/mesaageSlice'
+
 
 const store = configureStore({
   reducer: {
@@ -10,6 +12,7 @@ const store = configureStore({
     profile: profileReducer,
     jobs: jobReducer,
     offers: offerReducer,
+    messages: messageRudercer
   }
 })
 

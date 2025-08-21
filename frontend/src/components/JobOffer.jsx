@@ -4,11 +4,15 @@ import { useParams } from 'react-router-dom';
 import { getOffersByJob, updateOfferStatus } from '../features/offers/offerThunk';
 import { AUTH_STATUS } from '../features/auth/authConstants';
 import WorkerInfo from '../components/WorkerInfo';
+import MessageButton from './MessageButton';
+
 
 const JobOffer = () => {
   const { id: jobId } = useParams();
   const dispatch = useDispatch();
   const { offers, status, error } = useSelector((s) => s.offers)
+  const { user } = useSelector((s) => s.auth);
+
 
   useEffect(() => {
     if (status === AUTH_STATUS.IDLE) {
@@ -68,12 +72,12 @@ const handleUpdateStatus = async (offerId, newStatus) => {
               </button>
             </div>
           )}
-          <button
-            className="btn btn-sm btn-outline"
-            onClick={() => alert('Chat coming soon…')}
-          >
-            Message
-          </button>
+        <div className="mt-3">
+          <MessageButton
+            workerUserId={offer.worker_user_id}
+            myProfileId={user?.profile?.id}
+          />
+        </div>
 
         </div>
       ))}
@@ -82,3 +86,4 @@ const handleUpdateStatus = async (offerId, newStatus) => {
 };
 
 export default JobOffer
+

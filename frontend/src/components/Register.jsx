@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux"
-import { registerUser } from "../features/auth/authThunk"
+import { registerUser, loginUser } from "../features/auth/authThunk"
 import { useState, useMemo } from "react"
 import { useNavigate } from "react-router-dom";
 
@@ -52,25 +52,30 @@ const handleSubmit = async (e) => {
   }
 
   try {
-    await dispatch(registerUser({
-      username: username.trim(),
-      email: email.trim(),
-      password,
-      role
-    })).unwrap();
+  await dispatch(registerUser({
+    username: username.trim(),
+    email: email.trim(),
+    password,
+    role
+  })).unwrap();
 
-    setUsername('');
-    setEmail('');
-    setPassword('');
-    setRole('client');
-    setAccepted(false);
-    setLocalError(null);
+  await dispatch(loginUser({
+    username: username.trim(),
+    password,
+    skipProfileCheck: true
+  })).unwrap();
 
-    navigate('/login', { state: { justRegistered: true } });
+  setUsername('');
+  setEmail('');
+  setPassword('');
+  setRole('client');
+  setAccepted(false);
+  setLocalError(null);
 
-  } catch (error) {
-    setLocalError(String(error || 'Registration failed'));
-  }
+  navigate('/profile/create', { replace: true });
+} catch (error) {
+  setLocalError(String(error || 'Registration failed'));
+}
 };
 
   return (

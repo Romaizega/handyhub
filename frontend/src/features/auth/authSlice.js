@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {AUTH_STATUS} from './authConstants'
 import { registerUser, loginUser } from "./authThunk";
+import { getProfile } from "../profiles/profileThunk";
 
 const initialState = {
   user: null,
@@ -32,6 +33,8 @@ const authSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload
     },
+
+    
     extraReducers: (builder) => {
       builder
         .addCase(registerUser.pending, (state)=>{
@@ -57,6 +60,12 @@ const authSlice = createSlice({
           state.status = AUTH_STATUS.FAILED
           state.error = action.payload
         })
+
+        .addCase(getProfile.fulfilled, (state, action) => {
+        if (state.user) {
+          state.user.profile = action.payload ?? null
+        }
+      })
     }
   }
 }) 
