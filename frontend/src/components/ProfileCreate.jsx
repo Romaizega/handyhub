@@ -195,7 +195,7 @@ const ProfileCreate = () => {
                   className="h-64 w-64 rounded-full object-cover ring-1 ring-base-300"
                 />
               </div>
-            )}чч
+            )}
 
             {(localError || error) && (
               <p className="text-red-500 text-sm">

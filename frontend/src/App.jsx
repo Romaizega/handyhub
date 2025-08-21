@@ -19,6 +19,8 @@ import PublicProfileView from './components/PublicProfileView'
 import OfferCreate from './components/OfferCreate'
 import OfferDetails from './components/OfferDetails'
 import WorkersList from './components/WorkersList'
+import MessagesInbox from './components/MessagesInbox'
+import ChatThread from './components/ChatThread'
 
 function App() {
  
@@ -33,6 +35,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/public-profiles/:id" element={<PublicProfileView />} />
         <Route path="/workers" element={<WorkersList />} />
+        {/* <Route path="/messages/profile/:id" element={<MessageProfileView />} /> */}
+        <Route path="/messages" element={<MessagesInbox />} />
+        <Route path="/messages/:id" element={<MessagesInbox />} />
+        <Route path="/messages/profile/:id" element={<MessagesInbox />} />
 
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/jobs/:id" element={<JobDetails />} />

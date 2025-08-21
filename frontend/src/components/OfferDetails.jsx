@@ -31,7 +31,7 @@ const OfferDetails = () => {
       <h2 className="text-xl font-semibold mb-4">Offer Details</h2>
       <p><strong>Job ID:</strong> {offer.job_id}</p>
       <p><strong>Price:</strong> ${offer.price}</p>
-      <p><strong>Message:</strong> {offer.message}</p>
+      <p><strong>Comment:</strong> {offer.message}</p>
       <p><strong>Status:</strong> <span className="capitalize">{offer.status}</span></p>
     </div>
   );

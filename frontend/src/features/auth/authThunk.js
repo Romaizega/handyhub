@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../app/axios";
 import { setCredentials, setUser, clearAuth } from "./authSlice";
 import { clearProfile } from "../profiles/profileSlice";
+import { getProfile } from "../profiles/profileThunk";
 
 
 const registerUser = createAsyncThunk(
@@ -30,6 +31,7 @@ const loginUser = createAsyncThunk(
       dispatch(clearProfile())
       const me = await api.get('/auth/me')
       dispatch(setUser(me.data))
+      await dispatch(getProfile())
       return {accessToken}
       
     } catch (error) {
