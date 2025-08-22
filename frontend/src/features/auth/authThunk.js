@@ -59,4 +59,50 @@ const logoutUser = createAsyncThunk(
   }
 )
 
-export {registerUser, loginUser, logoutUser}
+const updateEmail = createAsyncThunk(
+  'auth/updateEmail',
+  async (email, { rejectWithValue }) => {
+    try {
+      await api.patch('/users/email', { email })
+      return email
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to update email');
+    }
+  }
+)
+
+const updatePassword = createAsyncThunk(
+  'auth/updatePassword',
+  async ({ currentPassword, newPassword }, { rejectWithValue }) => {
+    try {
+      await api.patch('/users/password', { currentPassword, newPassword });
+      return true;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to change password');
+    }
+  }
+);
+
+ const deleteAccount = createAsyncThunk(
+  'auth/deleteAccount',
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      await api.delete('/users/me');
+      dispatch(clearAuth());
+      dispatch(clearProfile());
+      return true;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to delete account');
+    }
+  }
+);
+
+
+export {
+  registerUser,
+  loginUser, 
+  logoutUser,
+  updateEmail,
+  updatePassword,
+  deleteAccount
+}

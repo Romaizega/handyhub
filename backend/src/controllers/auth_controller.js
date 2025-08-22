@@ -146,6 +146,51 @@ const getUsersPaged = async (req, res) => {
     console.error("Get users paged error:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
   }
+}
+
+const changeEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required" });
+    const existing = await userModel.getUserByEmail(email);
+    if (existing) return res.status(400).json({ message: "Email already in use" });
+    
+    const updated = await userModel.updateEmail(req.user.userId, email);
+    res.json({ message: "Email updated", user: updated[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) return res.status(400).json({ message: "Both passwords are required" });
+    
+    const user = await userModel.getUserById(req.user.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    
+    const matches = await bcrypt.compare(currentPassword, user.password_hash);
+    if (!matches) return res.status(401).json({ message: "Current password is incorrect" });
+    
+    const hash = await bcrypt.hash(newPassword, 10);
+    await userModel.updatePassword(req.user.userId, hash);
+    res.json({ message: "Password changed successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+const deleteAccount = async (req, res) => {
+  try {
+    await userModel.deleteUser(req.user.userId);
+    res.json({ message: "Account deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
 
@@ -155,5 +200,8 @@ module.exports = {
   me,
   refreshAccessToken,
   logout,
-  getUsersPaged
+  getUsersPaged,
+  changePassword,
+  changeEmail,
+  deleteAccount
 }

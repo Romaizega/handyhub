@@ -1,6 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {AUTH_STATUS} from './authConstants'
-import { registerUser, loginUser } from "./authThunk";
+import { 
+  registerUser, 
+  loginUser,
+  deleteAccount,
+  updateEmail,
+  updatePassword
+ } from "./authThunk";
 import { getProfile } from "../profiles/profileThunk";
 
 const initialState = {
@@ -69,7 +75,32 @@ const authSlice = createSlice({
         if (state.user) {
           state.user.profile = action.payload ?? null
         }
-      })
+        })
+        .addCase(updateEmail.fulfilled, (state, action) => {
+          if (state.user) state.user.email = action.payload;
+          state.status = AUTH_STATUS.SUCCEEDDED;
+        })
+        .addCase(updateEmail.rejected, (state, action) => {
+          state.error = action.payload;
+          state.status = AUTH_STATUS.FAILED;
+        })
+
+        .addCase(updatePassword.fulfilled, (state) => {
+          state.status = AUTH_STATUS.SUCCEEDDED;
+        })
+        .addCase(updatePassword.rejected, (state, action) => {
+          state.error = action.payload;
+          state.status = AUTH_STATUS.FAILED;
+        })
+
+        .addCase(deleteAccount.fulfilled, (state) => {
+          state.user = null;
+          state.accessToken = null;
+          state.status = AUTH_STATUS.IDLE;
+        })
+        .addCase(deleteAccount.rejected, (state, action) => {
+          state.error = action.payload;
+  });
     }
   }
 }) 

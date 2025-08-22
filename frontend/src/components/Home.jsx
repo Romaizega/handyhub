@@ -175,25 +175,36 @@ export default function Home() {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {jobs.map((job) => (
-              <Link key={job.id} to={`/jobs/${job.id}`} className="card bg-base-100 hover:shadow-lg transition hover:scale-[1.01]">
-                <div className="card-body">
-                  <h3 className="card-title text-base">{job.title || `Job #${job.id}`}</h3>
-                  <p className="opacity-80 line-clamp-2">{job.description || 'No description'}</p>
-                  <div className="mt-2 text-sm opacity-70 flex flex-wrap gap-3">
-                    <span className="inline-flex items-center gap-1">
-                      <MapPinIcon className="w-4 h-4" />
-                      {job.city || 'Remote'}
-                    </span>
-                    <span className="inline-flex items-center gap-1">
-                      <BanknotesIcon className="w-4 h-4" />
-                      {job.budget ? `$${job.budget}` : 'Budget: —'}
-                    </span>
-                  </div>
-                  <div className="card-actions justify-end mt-3">
-                    <span className="badge badge-outline">{job.category || 'General'}</span>
-                  </div>
-                </div>
-              </Link>
+          <Link
+            key={job.id}
+            to={`/jobs/${job.id}`}
+            className="card bg-base-100 hover:shadow-lg transition hover:scale-[1.01]"
+          >
+            {job.photos?.length > 0 && (
+              <img
+                src={job.photos[0]}
+                alt="Job"
+                className="h-40 w-full object-cover rounded-t"
+              />
+            )}
+            <div className="card-body">
+              <h3 className="card-title text-base">{job.title || `Job #${job.id}`}</h3>
+              <p className="opacity-80 line-clamp-2">{job.description || 'No description'}</p>
+              <div className="mt-2 text-sm opacity-70 flex flex-wrap gap-3">
+                <span className="inline-flex items-center gap-1">
+                  <MapPinIcon className="w-4 h-4" />
+                  {job.city || 'Remote'}
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <BanknotesIcon className="w-4 h-4" />
+                  {job.budget ? `$${job.budget}` : 'Budget: —'}
+                </span>
+              </div>
+              <div className="card-actions justify-end mt-3">
+                <span className="badge badge-outline">{job.category || 'General'}</span>
+              </div>
+            </div>
+          </Link>
             ))}
           </div>
         )}
