@@ -97,12 +97,12 @@ export default function Home() {
               </>
             ) : role === 'client' ? (
               <>
-                <Link to="/my-jobs" className="btn btn-primary">My Jobs</Link>
+                <Link to="/my-jobs" className="btn btn-neutral">My Jobs</Link>
                 <Link to="/jobs" className="btn btn-outline">Find workers</Link>
               </>
             ) : (
               <>
-                <Link to="/jobs" className="btn btn-primary">Find jobs</Link>
+                <Link to="/jobs" className="btn btn-neutral">Find jobs</Link>
                 <Link to="/my-offers" className="btn btn-outline">My offers</Link>
               </>
             )}
@@ -212,9 +212,9 @@ export default function Home() {
               {!isAuthed ? (
                 <Link to="/register" className="btn btn-neutral-content">Get started</Link>
               ) : role === 'client' ? (
-                <Link to="/my-jobs" className="btn btn-primary">Post a job</Link>
+                <Link to="/my-jobs" className="btn btn-neutral">Post a job</Link>
               ) : (
-                <Link to="/jobs" className="btn btn-primary">Find jobs</Link>
+                <Link to="/jobs" className="btn btn-neutral">Find jobs</Link>
               )}
             </div>
           </div>

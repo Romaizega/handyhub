@@ -47,8 +47,23 @@ const getThreads = async (meProfileId) => {
   return rows;
 };
 
+const getUnreadCount = async (profileId) => {
+  const [{ count }] = await db('messages')
+    .where({ recipient_profile_id: profileId, is_read: false })
+    .count()
+  return parseInt(count, 10) || 0
+}
+
+const markAllAsRead = async (profileId) => {
+  return await db('messages')
+    .where({ recipient_profile_id: profileId, is_read: false })
+    .update({ is_read: true })
+}
+
 module.exports = {
   getByParticipants,
   createMessage,
   getThreads,
+  getUnreadCount,
+  markAllAsRead
 }

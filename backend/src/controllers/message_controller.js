@@ -50,8 +50,32 @@ const getThreads = async (req, res) => {
   }
 };
 
+const getUnreadCount = async (req, res) => {
+  try {
+    const profileId = req.user.profileId
+    const count = await messageModel.getUnreadCount(profileId)
+    res.json({ unread: count })
+  } catch (error) {
+    console.error("getUnreadCount error:", error)
+    res.status(500).json({ message: "Server error", error: error.message })
+  }
+}
+
+const markAllAsRead = async (req, res) => {
+  try {
+    const profileId = req.user.profileId
+    await messageModel.markAllAsRead(profileId)
+    res.json({ success: true })
+  } catch (error) {
+    console.error("markAllAsRead error:", error)
+    res.status(500).json({ message: "Server error", error: error.message })
+  }
+}
+
 module.exports = {
   getDirectMessages,
   sendDirectMessage,
   getThreads,
+  getUnreadCount,
+  markAllAsRead
 };

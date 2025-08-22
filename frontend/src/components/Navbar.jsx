@@ -42,27 +42,34 @@ const Navbar = () => {
 
   // ------- message threads counter (badge) -------
   const [threadCount, setThreadCount] = useState(0)
-  useEffect(() => {
-    if (!isAuthed) {
-      setThreadCount(0)
-      return
+
+useEffect(() => {
+  if (!isAuthed) {
+    setThreadCount(0)
+    return
+  }
+
+  let ignore = false
+  const load = async () => {
+    try {
+      const { data } = await api.get('/messages/threads/unread')
+      if (!ignore) setThreadCount(data?.unread || 0)
+        console.log("🔔 Unread count:", data?.unread);
+    } catch {
+      if (!ignore) setThreadCount(0)
     }
-    let ignore = false
-    const load = async () => {
-      try {
-        const { data } = await api.get('/messages/threads')
-        if (!ignore) setThreadCount((data?.threads || []).length)
-      } catch {
-        if (!ignore) setThreadCount(0)
-      }
-    }
-    load()
-    const id = setInterval(load, 20000)
-    return () => { ignore = true; clearInterval(id) }
-  }, [isAuthed])
+  }
+
+  load()
+  const id = setInterval(load, 2000)
+  return () => {
+    ignore = true
+    clearInterval(id)
+  }
+}, [isAuthed])
 
   const baseNav = [
-    { name: 'Home', to: '/', private: false },
+    { name: 'Home', to: '/home', private: false },
     { name: 'Jobs', to: '/jobs', private: false },
     { name: 'Workers', to: '/workers', private: false },
   ]
@@ -78,7 +85,7 @@ const Navbar = () => {
 
   const Logout = () => {
     dispatch(logoutUser())
-    navigate('/')
+    navigate('/home')
   }
 
   // initials fallback
@@ -95,7 +102,7 @@ const Navbar = () => {
         <div className="relative flex h-16 items-center justify-between">
           {/* mobile menu button */}
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            <DisclosureButton className="group inline-flex items-center justify-center rounded-md p-2 text-base-content/70 hover:bg-base-200 hover:text-base-content focus:outline-2 focus:-outline-offset-1 focus:outline-primary">
+            <DisclosureButton className="group inline-flex items-center justify-center rounded-md p-2 text-base-content/70 hover:bg-base-200 hover:text-base-content focus:outline-2 focus:-outline-offset-1 focus:outline-neutral">
               <span className="sr-only">Open main menu</span>
               <Bars3Icon aria-hidden="true" className="block size-6 group-data-[open]:hidden" />
               <XMarkIcon aria-hidden="true" className="hidden size-6 group-data-[open]:block" />
