@@ -72,7 +72,7 @@ if (isAuthenticated) {
   )}
 
   <div className="flex justify-center items-center h-screen bg-base-200">
-    <div className="card w-96 bg-base-100 shadow-xl p-6">
+    <div className="card w-93 bg-base-100 shadow-xl p-6">
       <h2 className="text-2xl font-bold mb-4 text-center">Log in</h2>
 
       <form onSubmit={handleLogin} className="space-y-4">

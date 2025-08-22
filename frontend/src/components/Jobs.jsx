@@ -15,16 +15,18 @@ const AllJobs = () => {
     dispatch(getAllJobs());
   }, [dispatch]);
 
-  const filteredJobs = useMemo(() => {
-    return jobs
-      .filter(job => statusFilter === 'all' || job.status === statusFilter)
-      .filter(job => job.title.toLowerCase().includes(search.toLowerCase()))
-      .sort((a, b) => {
-        if (sortBy === 'budget') return b.budget - a.budget;
-        if (sortBy === 'oldest') return new Date(a.created_at) - new Date(b.created_at);
-        return new Date(b.created_at) - new Date(a.created_at); // newest
-      });
-  }, [jobs, statusFilter, search, sortBy]);
+const filteredJobs = useMemo(() => {
+  if (!Array.isArray(jobs)) return [];
+
+  return jobs
+    .filter(job => statusFilter === 'all' || job.status === statusFilter)
+    .filter(job => job.title?.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      if (sortBy === 'budget') return b.budget - a.budget;
+      if (sortBy === 'oldest') return new Date(a.created_at) - new Date(b.created_at);
+      return new Date(b.created_at) - new Date(a.created_at); 
+    });
+}, [jobs, statusFilter, search, sortBy]);
 
   if (status === 'loading') return <p>Loading jobs…</p>;
   if (error) return <p className="text-red-500">{error}</p>;
@@ -77,7 +79,7 @@ const AllJobs = () => {
           >
             <div className="card-body">
               <h2 className="card-title text-xl">{job.title}</h2>
-              <p className="text-sm text-gray-600">{job.description}</p>
+              {/* <p className="text-sm text-gray-600">{job.description}</p> */}
 
               <div className="text-sm mt-2 space-y-1">
                 <p><strong>Status:</strong> {job.status}</p>

@@ -51,11 +51,31 @@ const getUsersPaged = async (limit, page, role) => {
   }
 }
 
+const updateEmail = async (userId, newEmail) => {
+  return db('users')
+    .where({ id: userId })
+    .update({ email: newEmail })
+    .returning(['id', 'username', 'email', 'role'])
+}
+
+const updatePassword = async (userId, newPasswordHash) => {
+  return db('users')
+    .where({ id: userId })
+    .update({ password_hash: newPasswordHash });
+};
+
+const deleteUser = async (userId) => {
+  return db('users').where({ id: userId }).del();
+};
+
 module.exports = {
   getUserById,
   getAllUsers,
   getUserByEmail,
   getUserByUsername,
   createUser,
-  getUsersPaged
+  getUsersPaged,
+  updateEmail,
+  updatePassword,
+  deleteUser
 }

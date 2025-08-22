@@ -4,7 +4,10 @@ const {
   login,
   me,
   logout,
-  refreshAccessToken, 
+  refreshAccessToken,
+  changeEmail,
+  changePassword,
+  deleteAccount 
 } = require('../controllers/auth_controller')
 const authenticateJWT = require('../middleware/auth_middware')
 
@@ -15,5 +18,9 @@ router.post('/login', login)
 router.get('/me', authenticateJWT, me)
 router.post('/logout', logout)
 router.post('/refreshToken', refreshAccessToken)
+router.patch('/email',authenticateJWT, changeEmail)
+router.patch('/password',authenticateJWT, changePassword)
+router.delete('/me', authenticateJWT, deleteAccount)
 
 module.exports = router
+

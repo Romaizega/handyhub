@@ -72,6 +72,7 @@ useEffect(() => {
     { name: 'Home', to: '/home', private: false },
     { name: 'Jobs', to: '/jobs', private: false },
     { name: 'Workers', to: '/workers', private: false },
+    { name: 'Blog', to: '/blog', private: false },
   ]
 
   const roleNav = isAuthed

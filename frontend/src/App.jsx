@@ -20,11 +20,10 @@ import OfferCreate from './components/OfferCreate'
 import OfferDetails from './components/OfferDetails'
 import WorkersList from './components/WorkersList'
 import MessagesInbox from './components/MessagesInbox'
-import ChatThread from './components/ChatThread'
+import Settings from './components/Settings'
+import Blog from './components/Blog'
 
-function App() {
- 
-
+function App() { 
   return (
     <>
       <Navbar />
@@ -33,6 +32,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/blog" element={<Blog />} />
         <Route path="/public-profiles/:id" element={<PublicProfileView />} />
         <Route path="/workers" element={<WorkersList />} />
         {/* <Route path="/messages/profile/:id" element={<MessageProfileView />} /> */}
@@ -82,6 +82,14 @@ function App() {
           element={
             <ProtectedRoute>
               <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
             </ProtectedRoute>
           }
         />
