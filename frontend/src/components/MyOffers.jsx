@@ -40,7 +40,7 @@ const MyOffers = () => {
             <strong>Price:</strong> ${offer.price ?? '—'}
           </p>
           <p>
-            <strong>Comment:</strong> {offer.message || '—'}
+            <strong>Message:</strong> {offer.message || '—'}
           </p>
         </div>
       ))}

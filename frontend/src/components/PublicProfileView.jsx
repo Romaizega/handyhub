@@ -86,7 +86,7 @@ const PublicProfileView = () => {
 
           <div className="mt-4 flex gap-2">
             {isWorker && jobId && (
-              <Link to={`/offers/create?job=${jobId}`} className="btn btn-sm btn-primary">
+              <Link to={`/offers/create?job=${jobId}`} className="btn btn-sm btn-neutral">
                 Make Offer
               </Link>
             )}

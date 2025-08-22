@@ -128,7 +128,7 @@ const JobCreate = () => {
         <div className="card-body">
           <h1 className="text-2xl font-bold mb-2">Create a job</h1>
           <p className="text-base-content/70 mb-4">
-            Describe your task and optionally attach photos
+            Describe your task and attach photos. You could attach a photo and AI helps you
           </p>
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
