@@ -45,6 +45,8 @@ const ProfileCreate = () => {
   const [preview, setPreview] = useState('')
   const [localError, setLocalError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const { user } = useSelector((s) => s.auth);
+  const isWorker = user?.role === 'worker';
 
   const triggerPickFile = () => fileInputRef.current?.click()
 
@@ -203,25 +205,29 @@ const ProfileCreate = () => {
               </p>
             )}
 
-            <input
-              type="text"
-              placeholder="Skills (comma separated)"
-              className="input input-bordered w-full"
-              value={skills}
-              onChange={(e) => setSkills(e.target.value)}
-              onBlur={(e) => setSkills(normalizeSkills(e.target.value))}
-            />
+            {isWorker && (
+              <>
+                <input
+                  type="text"
+                  placeholder="Skills (comma separated)"
+                  className="input input-bordered w-full"
+                  value={skills}
+                  onChange={(e) => setSkills(e.target.value)}
+                  onBlur={(e) => setSkills(normalizeSkills(e.target.value))}
+                />
 
-            <input
-              type="number"
-              placeholder="Hourly rate"
-              className="input input-bordered w-full"
-              value={hourly_rate}
-              onChange={(e) => {
-                const v = e.target.value
-                setHourlyRate(v === '' ? '' : Math.max(0, Number(v)))
-              }}
-            />
+                <input
+                  type="number"
+                  placeholder="Hourly rate"
+                  className="input input-bordered w-full"
+                  value={hourly_rate}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setHourlyRate(v === '' ? '' : Math.max(0, Number(v)));
+                  }}
+                />
+              </>
+            )}
 
             <button
               type="submit"

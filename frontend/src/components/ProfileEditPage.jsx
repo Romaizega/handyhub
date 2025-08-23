@@ -46,6 +46,9 @@ const ProfileEdit = () => {
   const [fileName, setFileName] = useState('');
   const [localError, setLocalError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const { user } = useSelector((s) => s.auth);
+  const isWorker = user?.role === 'worker';
+
 
   useEffect(() => {
     if (profile) {
@@ -201,6 +204,15 @@ const ProfileEdit = () => {
                   <span className="text-sm text-base-content/70 truncate max-w-[220px]">
                     {fileName}
                   </span>
+                  {file && (
+                  <div className="mt-3">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="preview"
+                      className="h-32 w-32 rounded-full object-cover ring-2 ring-base-300"
+                    />
+                  </div>
+                  )}
                   <button
                     type="button"
                     className="btn btn-ghost btn-sm"
@@ -216,6 +228,8 @@ const ProfileEdit = () => {
               <p className="text-red-500 text-sm">{localError}</p>
             )}
 
+           {isWorker && (
+            <>
             <input
               name="skills"
               value={form.skills}
@@ -240,7 +254,9 @@ const ProfileEdit = () => {
               }}
               placeholder="Hourly rate"
               className="input input-bordered w-full"
-            />
+              />
+             </>
+             )}
 
             <button
               type="submit"
