@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { updateJob, getMyJobs, deleteJob } from "../features/jobs/jobThunk"
 import api from "../app/axios"
 
+// Max upload size and allowed file types
 const MAX_MB = 3
 const ALLOWED = ["image/jpeg", "image/png", "image/webp"]
 
@@ -11,19 +12,21 @@ const JobEdit = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { id } = useParams()
-
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [budget, setBudget] = useState("")
+// Form fields
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+  const [budget, setBudget] = useState('')
   const [due_date, setDueDate] = useState("")
+  
+   // Image state
   const [existingPhotos, setExistingPhotos] = useState([])
   const [newFiles, setNewFiles] = useState([])
   const [previews, setPreviews] = useState([])
-  const [error, setError] = useState("")
-  const [city, setCity] = useState("")
+  const [error, setError] = useState('')
+  const [city, setCity] = useState('')
 
   const fileInputRef = useRef(null)
-
+// Load job data on mount
   useEffect(() => {
     const fetchJob = async () => {
       try {
@@ -43,6 +46,7 @@ const JobEdit = () => {
     fetchJob()
   }, [id])
 
+  // Delete job
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this job?")) return;
 
@@ -55,7 +59,7 @@ const JobEdit = () => {
       setError(typeof err === "string" ? err : err?.message || "Failed to delete job");
     }
   }
-
+// Handle file selection
   const handleFilesPicked = (e) => {
     const picked = Array.from(e.target.files || [])
     const fresh = []
@@ -81,20 +85,21 @@ const JobEdit = () => {
     setPreviews((prev) => [...prev, ...freshPreviews])
   }
 
+   // Remove new uploaded preview
   const removeNewImage = (idx) => {
     const p = previews[idx]
     if (p?.url) URL.revokeObjectURL(p.url)
     setPreviews((prev) => prev.filter((_, i) => i !== idx))
     setNewFiles((prev) => prev.filter((_, i) => i !== idx))
   }
-
+ // Remove existing image from the job
   const removeExistingPhoto = (idx) => {
     setExistingPhotos((prev) => prev.filter((_, i) => i !== idx))
   }
-
+// Submit updated job
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setError("")
+    setError('')
 
     try {
       await dispatch(updateJob({
@@ -122,6 +127,7 @@ const JobEdit = () => {
         <div className="card-body">
           <h1 className="text-2xl font-bold mb-2">Edit job</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Title */}
             <input
               type="text"
               className="input input-bordered w-full"
@@ -130,6 +136,7 @@ const JobEdit = () => {
               onChange={(e) => setTitle(e.target.value)}
               required
             />
+            {/* Description */}
             <textarea
               className="textarea textarea-bordered w-full min-h-32"
               placeholder="Description"
@@ -137,6 +144,7 @@ const JobEdit = () => {
               onChange={(e) => setDescription(e.target.value)}
               required
             />
+            {/* City */}
             <input
               type="text"
               className="input input-bordered w-full"
@@ -144,6 +152,7 @@ const JobEdit = () => {
               value={city}
               onChange={(e) => setCity(e.target.value)}
             />
+            {/* Budget and Date */}
             <div className="grid sm:grid-cols-2 gap-3">
               <input
                 type="number"
@@ -225,13 +234,13 @@ const JobEdit = () => {
                 </div>
               )}
             </div>
-
+           {/* Error display */}
             {error && (
               <div className="alert alert-error">
                 <span>{error}</span>
               </div>
             )}
-
+             {/* Submit & Delete */}
             <button type="submit" className="btn btn-neutral w-full">
               Save changes
             </button>

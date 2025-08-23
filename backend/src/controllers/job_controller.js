@@ -1,9 +1,11 @@
 const profileModel = require('../models/profile_models')
 const userModel = require('../models/users_model')
 const jobsModel = require('../models/jobs_model')
-const fs = require('fs');
+const fs = require('fs') // File system utilities
 const path = require('path')
 
+
+// Retrieves all jobs from the database
 const getAllJobsController = async(req, res) => {
   try {
     const jobs = await jobsModel.getAllJobs()
@@ -17,6 +19,7 @@ const getAllJobsController = async(req, res) => {
   }
 }
 
+// Retrieves a specific job by its ID
 const getJobByIdController = async (req, res) => {
   try {
     const {id} = req.params
@@ -31,6 +34,7 @@ const getJobByIdController = async (req, res) => {
   }
 }
 
+// Retrieves jobs associated with the current logged-in client
 const getJobsByClientIdController = async (req, res) => {
   try {
     const userId = req.user.userId
@@ -49,6 +53,7 @@ const getJobsByClientIdController = async (req, res) => {
   }
 }
 
+// Creates a new job if the user is a client with a profile
 const createJobController = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -87,6 +92,7 @@ const createJobController = async (req, res) => {
       return res.status(400).json({ message: "City name is too long (max 100 characters)" });
     }
 
+    // Validate and sanitize job status
     const allowedStatuses = ['open', 'in_progress', 'done', 'cancelled'];
     const safeStatus = status && allowedStatuses.includes(status) ? status : 'open';
 
@@ -108,6 +114,7 @@ const createJobController = async (req, res) => {
   }
 };
 
+// Updates an existing job, including deleting removed photos from DB
 const updateJobController = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -152,7 +159,7 @@ const updateJobController = async (req, res) => {
       }
     }
 
-    // parse existingPhotos safely
+     // Prepare photo updates: delete removed, keep referenced
     const raw = req.body.existingPhotos;
     const existingPhotos = Array.isArray(raw) ? raw : raw ? [raw] : [];
 
@@ -188,8 +195,9 @@ const updateJobController = async (req, res) => {
     console.error("Update job error:", error.message);
     return res.status(500).json({ message: "Server error", error: error.message });
   }
-};
+}
 
+// Updates only the status of a job securely
 const updateJobStatusController = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -223,6 +231,7 @@ const updateJobStatusController = async (req, res) => {
   }
 };
 
+// Deletes a job, ensuring user authorization
 const deleteJobController = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -256,6 +265,7 @@ const deleteJobController = async (req, res) => {
   }
 }
 
+// Retrieves jobs with pagination
 const getJobsPagedController = async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 10;
@@ -280,5 +290,4 @@ module.exports = {
   createJobController,
   getJobsByClientIdController,
   getJobsPagedController
-  
 }

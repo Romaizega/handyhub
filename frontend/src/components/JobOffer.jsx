@@ -10,16 +10,18 @@ import MessageButton from './MessageButton';
 const JobOffer = () => {
   const { id: jobId } = useParams();
   const dispatch = useDispatch();
+   // Offers state from Redux
   const { offers, status, error } = useSelector((s) => s.offers)
   const { user } = useSelector((s) => s.auth);
 
-
+  // Fetch offers for this job on first load
   useEffect(() => {
     if (status === AUTH_STATUS.IDLE) {
       dispatch(getOffersByJob(jobId));
     }
   }, [status, dispatch, jobId]);
 
+ // Update offer status (accept/reject)
 const handleUpdateStatus = async (offerId, newStatus) => {
   try {
     await dispatch(updateOfferStatus({ id: offerId, status: newStatus })).unwrap();
@@ -30,7 +32,7 @@ const handleUpdateStatus = async (offerId, newStatus) => {
   }
 };
 
-
+// Loading/error states
   if (status === AUTH_STATUS.LOADING) return <div>Loading offers…</div>;
   if (error) return <div className="text-red-500">{error}</div>;
   if (offers.length === 0) return <div>No offers yet.</div>;
@@ -44,6 +46,7 @@ const handleUpdateStatus = async (offerId, newStatus) => {
             <strong>From:</strong>{" "}
             <WorkerInfo userId={offer.worker_user_id} />
           </p>
+           {/* Price and message */}
           {offer.price && (
             <p>
               <strong>Price:</strong> ${offer.price}
@@ -54,7 +57,7 @@ const handleUpdateStatus = async (offerId, newStatus) => {
               <strong>Message:</strong> {offer.message}
             </p>
           )}
-
+          {/* Action buttons for pending offers */}
           {offer.status === 'pending' && (
             <div className="flex gap-2 mt-3">
               <button
@@ -72,6 +75,7 @@ const handleUpdateStatus = async (offerId, newStatus) => {
               </button>
             </div>
           )}
+        {/* Message button */}
         <div className="mt-3">
           <MessageButton
             workerUserId={offer.worker_user_id}

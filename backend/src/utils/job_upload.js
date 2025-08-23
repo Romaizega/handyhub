@@ -5,8 +5,10 @@ const multer = require('multer');
 const UPLOADS_ROOT = path.join(process.cwd(), 'uploads');
 const JOB_PHOTOS_DIR = path.join(UPLOADS_ROOT, 'jobs');
 
+// Ensure upload directory exists
 fs.mkdirSync(JOB_PHOTOS_DIR, { recursive: true });
 
+// Configure Multer to store job photos with unique names
 const storage = multer.diskStorage({
   destination: (_, __, cb) => cb(null, JOB_PHOTOS_DIR),
   filename: (_, file, cb) => {

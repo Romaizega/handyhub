@@ -1,6 +1,6 @@
 const db = require('../db/db')
 
-
+// Get all offers made by the user (via their profile)
 const getAllOffers = (userId) => {
   return db('offers')
     .join('profiles', 'offers.worker_profile_id', 'profiles.id')
@@ -9,11 +9,12 @@ const getAllOffers = (userId) => {
     .orderBy('offers.created_at', 'desc');
 }
 
-
+// Get a single offer by its ID
 const getOfferById = (id) => {
   return db('offers').where({id}).first()
 }
 
+// Create a new offer for a job
 const getOffersByJobId = (jobId) => {
   return db('offers')
     .join('profiles', 'offers.worker_profile_id', 'profiles.id')
@@ -27,6 +28,7 @@ const getOffersByJobId = (jobId) => {
     .orderBy('offers.created_at', 'desc');
 }
 
+// Create a new offer for a job
 const createOffer = async (
   job_id,
   worker_profile_id,
@@ -46,6 +48,7 @@ const createOffer = async (
   return offer
 }
 
+// Update offer fields (partial update)
 const updateOffer = async (
   id,
   price,
@@ -70,11 +73,12 @@ const updateOffer = async (
   return offer
 }
 
-
+// Delete offer by ID
 const deleteOffer = (id) => {
   return db('offers').where({id}).del()
 }
 
+// Update only the status field of an offer
 const updateOfferStatus = async (id, status) => {
   const [offer] = await db('offers')
     .where({ id })
@@ -82,8 +86,6 @@ const updateOfferStatus = async (id, status) => {
     .returning('*');
   return offer;
 };
-
-
 
 module.exports = {
   getAllOffers,

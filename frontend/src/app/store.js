@@ -5,7 +5,7 @@ import jobReducer from '../features/jobs/jobSlice'
 import offerReducer from '../features/offers/offerSlice'
 import messageRudercer from '../features/messages/mesaageSlice'
 
-
+// Configure global Redux store with feature slices
 const store = configureStore({
   reducer: {
     auth: authReducer,

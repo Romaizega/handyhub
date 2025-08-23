@@ -16,6 +16,7 @@ const MessagesInbox = () => {
   const [error, setError] = useState("");
   const [selectedOtherId, setSelectedOtherId] = useState(null);
 
+  // Mark all messages as read on mount
   useEffect(() => {
     const markRead = async () => {
       if (!user) return;
@@ -28,6 +29,7 @@ const MessagesInbox = () => {
     markRead();
   }, [user]);
 
+  // Fetch message threads
   useEffect(() => {
     if (!user || !currentProfileId) {
       setError("Please login to view messages.");
@@ -44,6 +46,7 @@ const MessagesInbox = () => {
         const items = data.threads || [];
         setThreads(items);
 
+         // Auto-select a thread: from route or default to first available
         if (routeOtherId) {
           setSelectedOtherId(Number(routeOtherId));
         } else {
@@ -60,15 +63,18 @@ const MessagesInbox = () => {
     return () => { ignore = true; };
   }, [user, currentProfileId, routeOtherId]);
 
+   // Sync state if route param changes
   useEffect(() => {
     if (routeOtherId) setSelectedOtherId(Number(routeOtherId));
   }, [routeOtherId]);
 
+  // Filter out invalid/self threads
   const visibleThreads = useMemo(
     () => threads.filter((t) => t.other_profile_id !== currentProfileId),
     [threads, currentProfileId]
   );
 
+  // Navigate and update selection
   const openThread = (otherId) => {
     setSelectedOtherId(otherId);
     navigate(`/messages/${otherId}`, { replace: false });
@@ -76,6 +82,7 @@ const MessagesInbox = () => {
 
   const selectedThread = threads.find(t => t.other_profile_id === selectedOtherId);
 
+   // User not logged in
   if (!user || !currentProfileId) {
     return (
       <div className="max-w-4xl mx-auto p-6">
@@ -117,6 +124,8 @@ const MessagesInbox = () => {
                         className="w-10 h-10 rounded-full object-cover"
                       />
                     )}
+
+                    {/* Message preview */}
                     <div className="min-w-0">
                       <div className="font-medium truncate">
                         {t.other_display_name || `User #${t.other_profile_id}`}
@@ -136,7 +145,7 @@ const MessagesInbox = () => {
           </ul>
         </aside>
 
-        {/* Chat */}
+       {/* Main chat area */}
         <main className="md:col-span-2">
           {selectedOtherId && currentProfileId ? (
             <ChatThread

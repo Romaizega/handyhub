@@ -9,12 +9,14 @@ const MyJobs = () => {
   const [selectedPhoto, setSelectedPhoto] = useState(null)
   const { myjobs, status, error } = useSelector((s) => s.jobs)
 
+  // Fetch jobs on first load if idle
   useEffect(() => {
     if (status === AUTH_STATUS.IDLE) {
       dispatch(getMyJobs())
     }
   }, [status, dispatch])
 
+  // Handle status dropdown change
   const handleStatusChange = (jobId, currentStatus, newStatus) => {
     if (currentStatus === newStatus) return
     const confirmed = window.confirm(`Are you sure you want to change status to "${newStatus}"?`)
@@ -28,6 +30,7 @@ const MyJobs = () => {
       )
   }
 
+  // Show loading spinner
   if (status === AUTH_STATUS.LOADING) {
     return (
       <div className="min-h-[40vh] flex items-center justify-center">
@@ -58,6 +61,7 @@ const MyJobs = () => {
         </Link>
       </div>
 
+       {/* No jobs UI */}
       {isEmpty ? (
         <div className="card bg-base-100 shadow-md">
           <div className="card-body items-center text-center">

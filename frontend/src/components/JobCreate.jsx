@@ -5,6 +5,7 @@ import { createJob, getMyJobs } from '../features/jobs/jobThunk';
 import { AUTH_STATUS } from '../features/auth/authConstants';
 import api from '../app/axios';
 
+// Max upload size and allowed file types
 const MAX_MB = 3;
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
 
@@ -12,23 +13,26 @@ const JobCreate = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { status, error } = useSelector((s) => s.jobs);
-
+   // Form fields
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [budget, setBudget] = useState('');
   const [due_date, setDueDate] = useState('');
   const [city, setCity] = useState('');
 
-
+    // File/image state
   const fileInputRef = useRef(null);
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
+  // Local states for error/loading
   const [localError, setLocalError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
 
+  // Trigger hidden file input
   const triggerPickFiles = () => fileInputRef.current?.click();
 
+  // Handle file selection
   const handleFilesPicked = (e) => {
     setLocalError('');
     const picked = Array.from(e.target.files || []);
@@ -58,21 +62,21 @@ const JobCreate = () => {
     setFiles((prev) => [...prev, ...fresh]);
     setPreviews((prev) => [...prev, ...freshPreviews]);
   };
-
+  // Remove a specific image
   const removeImage = (idx) => {
     const p = previews[idx];
     if (p?.url) URL.revokeObjectURL(p.url);
     setPreviews((prev) => prev.filter((_, i) => i !== idx));
     setFiles((prev) => prev.filter((_, i) => i !== idx));
   };
-
+ // Clear all uploaded images
   const clearAllImages = () => {
     previews.forEach((p) => p.url && URL.revokeObjectURL(p.url));
     setPreviews([]);
     setFiles([]);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
-
+   // Use AI to autofill title/description from first uploaded image
   const handleAIFill = async () => {
     if (!files[0]) {
       setLocalError('Please upload at least one image for AI.');
@@ -97,7 +101,7 @@ const JobCreate = () => {
       setAiLoading(false);
     }
   };
-
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLocalError('');
@@ -133,6 +137,7 @@ const JobCreate = () => {
           <p className="text-base-content/70 mb-4">
            Tell us what needs to be done — feel free to add photos! You can even upload a picture and get smart suggestions from AI
           </p>
+          {/* Form fields */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="text"
@@ -190,13 +195,14 @@ const JobCreate = () => {
                 <button type="button" className="btn btn-neutral btn-sm" onClick={triggerPickFiles}>
                   Upload photos
                 </button>
+
+                 {/* Image previews */}
                 {previews.length > 0 && (
                   <button type="button" className="btn btn-neutral btn-sm" onClick={clearAllImages}>
                     Clear all
                   </button>
                 )}
               </div>
-
               {previews.length > 0 && (
                 <div className="mt-3 grid grid-cols-3 sm:grid-cols-4 gap-3">
                   {previews.map((p, idx) => (

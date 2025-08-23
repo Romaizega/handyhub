@@ -7,20 +7,23 @@ const AllJobs = () => {
   const dispatch = useDispatch();
   const { jobs, status, error } = useSelector((state) => state.jobs);
 
+   // Filter & sort states
   const [statusFilter, setStatusFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('newest');
-
   const [cityFilter, setCityFilter] = useState('');
+  // Get unique city names for filter dropdown
   const cities = useMemo(() => {
     const allCities = jobs?.map(job => job.city).filter(Boolean);
     return [...new Set(allCities)];
   }, [jobs]);
 
+   // Load all jobs on mount
   useEffect(() => {
     dispatch(getAllJobs());
   }, [dispatch]);
 
+   // Filter, search and sort jobs
   const filteredJobs = useMemo(() => {
     if (!Array.isArray(jobs)) return [];
 
@@ -35,6 +38,7 @@ const AllJobs = () => {
       });
   }, [jobs, statusFilter, search, sortBy, cityFilter]);
 
+  // Loading and error states
   if (status === 'loading') return <p>Loading jobs…</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
@@ -56,7 +60,7 @@ const AllJobs = () => {
           ))}
         </div>
 
-        {/* ✅ Добавлено: фильтр по городам */}
+         {/* City, sort, search */}
         <div className="flex gap-2 items-center">
           <select
             className="select select-bordered select-sm"
@@ -111,6 +115,7 @@ const AllJobs = () => {
                 )}
               </div>
 
+              {/* Job photo */}
               {job.photos?.length > 0 && (
                 <img
                   src={job.photos[0]}
@@ -119,6 +124,7 @@ const AllJobs = () => {
                 />
               )}
 
+              {/* View details link */}
               <div className="mt-4">
                 <Link to={`/jobs/${job.id}`} className="btn btn-sm btn-outline w-full">
                   View details

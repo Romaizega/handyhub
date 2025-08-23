@@ -5,11 +5,12 @@ import api from '../app/axios'
 const JobDetails = () => {
   const { id } = useParams()
   const [job, setJob] = useState(null)
-  const [error, setError] = useState("")
+  const [error, setError] = useState('')
   const [selectedPhoto, setSelectedPhoto] = useState(null)
 
   
   useEffect(() => {
+    // Fetch job data on mount or when ID changes
     const fetch = async () => {
       try {
         const { data } = await api.get(`/jobs/${id}`)
@@ -26,8 +27,12 @@ const JobDetails = () => {
   
   return (
     <div className="max-w-3xl mx-auto p-4">
+
+      {/* Job info */}
       <h1 className="text-2xl font-bold mb-2">{job.title}</h1>
       <p className="text-gray-700 mb-2">{job.description}</p>
+
+      {/* Metadata */}
       <div className="text-sm text-gray-600 space-y-1 mb-4">
         <p><strong>City:</strong> {job.city}</p>
         <p><strong>Status:</strong> {job.status}</p>
@@ -35,6 +40,8 @@ const JobDetails = () => {
         <p><strong>Due:</strong> {new Date(job.due_date).toLocaleDateString()}</p>
         <p><strong>Created:</strong> {new Date(job.created_at).toLocaleDateString()}</p>
       </div>
+
+       {/* Job photos */}
       {Array.isArray(job.photos) && job.photos.length > 0 && (
         <div className="mt-3">
           <h4 className="text-sm font-semibold text-base-content/70 mb-2">
@@ -51,6 +58,8 @@ const JobDetails = () => {
                 onClick={() => setSelectedPhoto(photo)}
               />
             ))}
+      
+      {/* Modal for enlarged image */}
       {selectedPhoto && (
         <dialog open className="modal">
         <div className="modal-box max-w-3xl">
@@ -68,6 +77,8 @@ const JobDetails = () => {
         </dialog>
       )}
     </div>
+
+    {/* Indicator for more photos */}
     {job.photos.length > 4 && (
         <p className="text-sm mt-1 text-blue-500">
         +{job.photos.length - 4} more
@@ -75,6 +86,8 @@ const JobDetails = () => {
         )}
       </div>
     )}
+
+      {/* Link to client profile */}
       <Link
         to={`/public-profiles/${job.client_user_id}?job=${job.id}`}
         className="btn btn-sm btn-outline mt-4"

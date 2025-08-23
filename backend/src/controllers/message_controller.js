@@ -1,5 +1,6 @@
 const messageModel = require("../models/message_model");
 
+// Get all direct messages between current user and another profile
 const getDirectMessages = async (req, res) => {
   const currentProfileId = req.user.profileId;
   const { otherProfileId } = req.query;
@@ -16,8 +17,9 @@ const getDirectMessages = async (req, res) => {
     console.error("getDirectMessages error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
-};
+}
 
+// Send a direct message to another profile (optionally linked to a job)
 const sendDirectMessage = async (req, res) => {
   const senderId = req.user.profileId;
   const { recipientId, text, jobId } = req.body;
@@ -39,6 +41,7 @@ const sendDirectMessage = async (req, res) => {
   }
 };
 
+// Get all conversation threads involving the current user
 const getThreads = async (req, res) => {
   const me = req.user.profileId;
   try {
@@ -48,8 +51,9 @@ const getThreads = async (req, res) => {
     console.error("getThreads error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
-};
+}
 
+// Get total count of unread messages for current user
 const getUnreadCount = async (req, res) => {
   try {
     const profileId = req.user.profileId
@@ -61,6 +65,7 @@ const getUnreadCount = async (req, res) => {
   }
 }
 
+// Mark all unread messages as read for the current user
 const markAllAsRead = async (req, res) => {
   try {
     const profileId = req.user.profileId
@@ -78,4 +83,4 @@ module.exports = {
   getThreads,
   getUnreadCount,
   markAllAsRead
-};
+}

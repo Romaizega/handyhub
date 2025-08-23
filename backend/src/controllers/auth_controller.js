@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 const userModel = require('../models/users_model');
 
-
+// Registers a new user after validating input and checking uniqueness
 const register = async (req, res) => {
   const {username, email, password, role} = req.body;
 
@@ -45,6 +45,7 @@ const register = async (req, res) => {
   }
 };
 
+// Authenticates a user and issues JWT access + refresh tokens
 const login = async (req, res) => {
   const {username, password} = req.body
   if(!username || !password) {
@@ -60,7 +61,7 @@ const login = async (req, res) => {
     if(!isMatchPassword) {
       return res.status(401).json({message: "Invalid password"})
     }
-
+    // Generate access and refresh tokens
     const accessToken = jwt.sign(
       {userId: user.id, username: user.username},
       process.env.JWT_SECRET,
@@ -72,6 +73,7 @@ const login = async (req, res) => {
       {expiresIn: process.env.JWT_EXPIRES_WEEK}
     )
 
+     // Store refresh token in secure cookie
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -88,7 +90,7 @@ const login = async (req, res) => {
   }
 }
 
-
+// Returns current user's profile info (decoded from access token)
 const me = async (req, res) => {
   try {
     const user = await userModel.getUserById(req.user.userId)
@@ -108,6 +110,7 @@ const me = async (req, res) => {
   }
 }
 
+// Refreshes access token using a valid refresh token stored in cookies
 const refreshAccessToken = (req, res) => {
   const refreshToken = req.cookies.refreshToken
   if(!refreshToken) {
@@ -124,6 +127,7 @@ const refreshAccessToken = (req, res) => {
   })
 }
 
+// Clears refresh token cookie to log out the user
 const logout = (req, res) => {
   res.clearCookie('refreshToken', {
     httpOnly: true,
@@ -133,6 +137,7 @@ const logout = (req, res) => {
   res.status(200).json({message: "Logout successfully"})
 }
 
+// Retrieves users with pagination and optional role filtering
 const getUsersPaged = async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 10;
@@ -148,6 +153,7 @@ const getUsersPaged = async (req, res) => {
   }
 }
 
+// Changes user's email after checking availability
 const changeEmail = async (req, res) => {
   try {
     const { email } = req.body;
@@ -161,8 +167,9 @@ const changeEmail = async (req, res) => {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
-};
+}
 
+// Changes user's password after verifying current one
 const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -183,6 +190,7 @@ const changePassword = async (req, res) => {
   }
 }
 
+// Deletes the user's account from DB
 const deleteAccount = async (req, res) => {
   try {
     await userModel.deleteUser(req.user.userId);

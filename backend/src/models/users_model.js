@@ -1,21 +1,26 @@
 const db = require('../db/db')
 
+// Get user by ID
 const getUserById = (id) => {
   return db('users').where({id}).first()
 };
 
+// Get all users ordered by newest first
 const getAllUsers = () => {
   return db('users').select('*').orderBy('id', 'desc')
 }
 
+// Get user by username (unique)
 const getUserByUsername = (username) =>{
   return db('users').where({username}).first()
 };
 
+// Get user by email (unique)
 const getUserByEmail = (email) => {
   return db('users').where({email}).first()
 }
 
+// Create a new user with hashed password
 const createUser = async(username, email, passwordHash, role) => {
   const [user] = await db('users')
     .insert({username, email, password_hash: passwordHash, role})
@@ -23,6 +28,7 @@ const createUser = async(username, email, passwordHash, role) => {
   return user
 }
 
+// Get paginated users list, optionally filtered by role
 const getUsersPaged = async (limit, page, role) => {
   const offset = (page - 1) * limit;
 
@@ -51,6 +57,7 @@ const getUsersPaged = async (limit, page, role) => {
   }
 }
 
+// Update user's email by ID
 const updateEmail = async (userId, newEmail) => {
   return db('users')
     .where({ id: userId })
@@ -58,15 +65,17 @@ const updateEmail = async (userId, newEmail) => {
     .returning(['id', 'username', 'email', 'role'])
 }
 
+// Update user's password (expects hashed password)
 const updatePassword = async (userId, newPasswordHash) => {
   return db('users')
     .where({ id: userId })
     .update({ password_hash: newPasswordHash });
-};
+}
 
+// Delete user by ID
 const deleteUser = async (userId) => {
   return db('users').where({ id: userId }).del();
-};
+}
 
 module.exports = {
   getUserById,

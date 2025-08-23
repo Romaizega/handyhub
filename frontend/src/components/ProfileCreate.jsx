@@ -7,6 +7,7 @@ import api from '../app/axios'
 const MAX_MB = 3
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp']
 
+// Normalize and deduplicate skill strings
 const normalizeSkills = (raw) => {
   if (!raw) return ''
   const tokens = String(raw)
