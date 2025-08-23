@@ -22,6 +22,7 @@ import WorkersList from './components/WorkersList'
 import MessagesInbox from './components/MessagesInbox'
 import Settings from './components/Settings'
 import Blog from './components/Blog'
+import Footer from './components/Footer'
 
 function App() { 
   return (
@@ -130,6 +131,7 @@ function App() {
         {/* <Route path="/jobs/:id/offers" element={<JobOffer />} /> */}
       </Routes>
       </div>
+      <Footer/>
     </>
   )
 }

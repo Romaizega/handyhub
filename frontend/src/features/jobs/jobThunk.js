@@ -42,13 +42,17 @@ const createJob = createAsyncThunk(
     photos,   
     status,
     budget,
-    due_date
+    due_date,
+    city
   }, { rejectWithValue }) => {
     try {
       const formData = new FormData();
       formData.append('title', title);
       formData.append('description', description);
       formData.append('status', status ?? 'open');
+      if (typeof city === 'string' && city.trim()) {
+      formData.append('city', city.trim());
+      }
       if (budget != null) formData.append('budget', budget);
       if (due_date) formData.append('due_date', due_date);
 
@@ -80,13 +84,17 @@ const updateJob = createAsyncThunk(
     existingPhotos = [],
     status,
     budget,
-    due_date
+    due_date,
+    city
   }, { rejectWithValue }) => {
     try {
       const formData = new FormData();
       formData.append('title', title);
       formData.append('description', description);
       if (status) formData.append('status', status);
+      if (typeof city === 'string' && city.trim()) {
+        formData.append('city', city.trim());
+      }
       if (budget != null) formData.append('budget', budget);
       if (due_date) formData.append('due_date', due_date);
 

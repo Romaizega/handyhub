@@ -62,7 +62,7 @@ const createJobController = async (req, res) => {
       return res.status(400).json({message: "Profile not found"})
     }
 
-    const { title, description, photos, budget, due_date, status } = req.body;
+    const { title, description, photos, budget, due_date, status, city } = req.body;
     const uploadedFiles = req.files || []
     const photoNames = uploadedFiles.map(f => `/uploads/jobs/${f.filename}`)
 
@@ -79,6 +79,13 @@ const createJobController = async (req, res) => {
         return res.status(400).json({message: "budget must be a non-negative number"});
       }
     }
+    if (!city || city.trim().length === 0) {
+      return res.status(400).json({ message: "City is required" });
+    }
+
+    if (city && city.trim().length > 100) {
+      return res.status(400).json({ message: "City name is too long (max 100 characters)" });
+    }
 
     const allowedStatuses = ['open', 'in_progress', 'done', 'cancelled'];
     const safeStatus = status && allowedStatuses.includes(status) ? status : 'open';
@@ -90,7 +97,8 @@ const createJobController = async (req, res) => {
       photoNames,
       safeStatus,
       budget ?? null,
-      due_date ?? null
+      due_date ?? null,
+      city ?? null
     )
 
     return res.status(201).json({message: "Job created", job });
@@ -120,7 +128,7 @@ const updateJobController = async (req, res) => {
       return res.status(403).json({ message: "You can only update your own jobs" });
     }
 
-    const { title, description, status, budget, due_date } = req.body;
+    const { title, description, status, budget, due_date, city } = req.body;
 
     // validation
     if (title && title.trim().length < 3) {
@@ -129,6 +137,14 @@ const updateJobController = async (req, res) => {
     if (description && description.trim().length < 10) {
       return res.status(400).json({ message: "Description must be at least 10 characters" });
     }
+
+    if (!city || city.trim().length === 0) {
+      return res.status(400).json({ message: "City is required" });
+    }
+    if (city && city.trim().length > 100) {
+      return res.status(400).json({ message: "City name is too long (max 100 characters)" });
+    }
+
     if (budget !== undefined) {
       const b = Number(budget);
       if (isNaN(b) || b < 0) {
@@ -162,7 +178,8 @@ const updateJobController = async (req, res) => {
       finalPhotos,
       status,
       budget ?? null,
-      due_date ?? null
+      due_date ?? null,
+      city ?? null
     );
 
     return res.status(200).json({ message: "Job updated", job: updated });
