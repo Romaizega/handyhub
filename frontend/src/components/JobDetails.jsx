@@ -29,6 +29,7 @@ const JobDetails = () => {
       <h1 className="text-2xl font-bold mb-2">{job.title}</h1>
       <p className="text-gray-700 mb-2">{job.description}</p>
       <div className="text-sm text-gray-600 space-y-1 mb-4">
+        <p><strong>City:</strong> {job.city}</p>
         <p><strong>Status:</strong> {job.status}</p>
         <p><strong>Budget:</strong> ${job.budget}</p>
         <p><strong>Due:</strong> {new Date(job.due_date).toLocaleDateString()}</p>
