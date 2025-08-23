@@ -25,16 +25,16 @@ Built with **React + Redux Toolkit + Vite + Tailwind/DaisyUI** on the frontend a
 ##  Screenshots
 
 ###  Home Page
-![Home](./docs/screens/home.png)
+![Home](.doc/home.png)
 
 ###  Jobs
-![Jobs](./docs/screens/jobs.png)
+![Jobs](.doc/jobs.png)
 
 ###  AI feature
-![Jobs](./docs/screens/jobs.png)
+![Jobs](.doc/createjob.png)
 
 ###  Settings
-![Settings](./docs/screens/settings.png)
+![Settings](.doc/setting.png)
 
 
 ---
