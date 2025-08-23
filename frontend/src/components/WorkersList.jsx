@@ -22,7 +22,6 @@ const WorkersList = () => {
         const fetchedProfiles = res.data.profiles || [];
         setProfiles(fetchedProfiles);
 
-        // Сбор уникальных городов и скиллов
         const uniqueCities = [...new Set(fetchedProfiles.map(p => p.city).filter(Boolean))];
         const uniqueSkills = [
           ...new Set(

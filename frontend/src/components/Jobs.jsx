@@ -11,22 +11,29 @@ const AllJobs = () => {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('newest');
 
+  const [cityFilter, setCityFilter] = useState('');
+  const cities = useMemo(() => {
+    const allCities = jobs?.map(job => job.city).filter(Boolean);
+    return [...new Set(allCities)];
+  }, [jobs]);
+
   useEffect(() => {
     dispatch(getAllJobs());
   }, [dispatch]);
 
-const filteredJobs = useMemo(() => {
-  if (!Array.isArray(jobs)) return [];
+  const filteredJobs = useMemo(() => {
+    if (!Array.isArray(jobs)) return [];
 
-  return jobs
-    .filter(job => statusFilter === 'all' || job.status === statusFilter)
-    .filter(job => job.title?.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => {
-      if (sortBy === 'budget') return b.budget - a.budget;
-      if (sortBy === 'oldest') return new Date(a.created_at) - new Date(b.created_at);
-      return new Date(b.created_at) - new Date(a.created_at); 
-    });
-}, [jobs, statusFilter, search, sortBy]);
+    return jobs
+      .filter(job => statusFilter === 'all' || job.status === statusFilter)
+      .filter(job => job.title?.toLowerCase().includes(search.toLowerCase()))
+      .filter(job => !cityFilter || job.city === cityFilter)
+      .sort((a, b) => {
+        if (sortBy === 'budget') return b.budget - a.budget;
+        if (sortBy === 'oldest') return new Date(a.created_at) - new Date(b.created_at);
+        return new Date(b.created_at) - new Date(a.created_at); 
+      });
+  }, [jobs, statusFilter, search, sortBy, cityFilter]);
 
   if (status === 'loading') return <p>Loading jobs…</p>;
   if (error) return <p className="text-red-500">{error}</p>;
@@ -49,7 +56,19 @@ const filteredJobs = useMemo(() => {
           ))}
         </div>
 
+        {/* ✅ Добавлено: фильтр по городам */}
         <div className="flex gap-2 items-center">
+          <select
+            className="select select-bordered select-sm"
+            value={cityFilter}
+            onChange={(e) => setCityFilter(e.target.value)}
+          >
+            <option value="">All Cities</option>
+            {cities.map(city => (
+              <option key={city} value={city}>{city}</option>
+            ))}
+          </select>
+
           <select
             className="select select-bordered select-sm"
             value={sortBy}
@@ -78,8 +97,8 @@ const filteredJobs = useMemo(() => {
             className="card bg-base-100 shadow hover:shadow-lg transition"
           >
             <div className="card-body">
-              <h2 className="card-title text-xl">{job.title}</h2>
-              {/* <p className="text-sm text-gray-600">{job.description}</p> */}
+              <h2 className="card-title text-xl ">{job.title}</h2>
+              <p className="text-sm mt-2 space-y-2"><strong>City: </strong>{job.city}</p>
 
               <div className="text-sm mt-2 space-y-1">
                 <p><strong>Status:</strong> {job.status}</p>
@@ -117,4 +136,4 @@ const filteredJobs = useMemo(() => {
   );
 };
 
-export default AllJobs
+export default AllJobs;

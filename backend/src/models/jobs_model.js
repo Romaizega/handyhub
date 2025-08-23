@@ -29,7 +29,8 @@ const createJob = async (
   photos,
   status,
   budget,
-  due_date
+  due_date,
+  city
 ) => {
   const [job] = await db('jobs')
     .insert({
@@ -41,7 +42,8 @@ const createJob = async (
       : JSON.stringify(Array.isArray(photos) ? photos : [String(photos)]),
       status,
       budget,
-      due_date
+      due_date,
+      city
     })
     .returning('*');
 
@@ -55,7 +57,8 @@ const updateJob = async (
   photos,
   status,
   budget,
-  due_date
+  due_date,
+  city
 ) => {
   const update = { updated_at: db.fn.now() };
   if (title !== undefined)
@@ -70,6 +73,8 @@ const updateJob = async (
     update.budget = budget;
   if (due_date !== undefined) 
     update.due_date = due_date;
+  if (city !== undefined) 
+    update.city = city;
 
   const [job] = await db('jobs')
     .where({ id })

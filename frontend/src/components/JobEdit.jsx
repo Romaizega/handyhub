@@ -20,6 +20,8 @@ const JobEdit = () => {
   const [newFiles, setNewFiles] = useState([])
   const [previews, setPreviews] = useState([])
   const [error, setError] = useState("")
+  const [city, setCity] = useState("")
+
   const fileInputRef = useRef(null)
 
   useEffect(() => {
@@ -31,6 +33,7 @@ const JobEdit = () => {
         setDescription(job.description)
         setBudget(job.budget)
         setDueDate(job.due_date?.slice(0, 10))
+        setCity(job.city || "")
         setExistingPhotos(job.photos || [])
       } catch (err) {
         console.error("Failed to fetch job", err)
@@ -101,7 +104,8 @@ const JobEdit = () => {
         photos: newFiles,
         existingPhotos,
         budget,
-        due_date
+        due_date,
+        city
       })).unwrap()
 
       dispatch(getMyJobs())
@@ -132,6 +136,13 @@ const JobEdit = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
+            />
+            <input
+              type="text"
+              className="input input-bordered w-full"
+              placeholder="City"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
             />
             <div className="grid sm:grid-cols-2 gap-3">
               <input

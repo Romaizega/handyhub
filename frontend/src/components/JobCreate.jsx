@@ -17,6 +17,8 @@ const JobCreate = () => {
   const [description, setDescription] = useState('');
   const [budget, setBudget] = useState('');
   const [due_date, setDueDate] = useState('');
+  const [city, setCity] = useState('');
+
 
   const fileInputRef = useRef(null);
   const [files, setFiles] = useState([]);
@@ -108,6 +110,7 @@ const JobCreate = () => {
           photos: files,
           budget,
           due_date,
+          city
         })
       ).unwrap();
 
@@ -128,7 +131,7 @@ const JobCreate = () => {
         <div className="card-body">
           <h1 className="text-2xl font-bold mb-2">Create a job</h1>
           <p className="text-base-content/70 mb-4">
-            Describe your task and attach photos. You could attach a photo and AI helps you
+           Tell us what needs to be done — feel free to add photos! You can even upload a picture and get smart suggestions from AI
           </p>
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
@@ -144,6 +147,14 @@ const JobCreate = () => {
               placeholder="Description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              required
+            />
+            <input
+              type="text"
+              className="input input-bordered w-full"
+              placeholder="City"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
               required
             />
             <div className="grid sm:grid-cols-2 gap-3">
