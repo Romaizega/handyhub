@@ -1,10 +1,11 @@
 const db = require('../db/db')
 
-
+// Get all jobs ordered by status
 const getAllJobs = () => {
   return db('jobs').select('*').orderBy('status', 'desc')
 }
 
+// Get detailed job info by job ID (includes client email)
 const getJobById = (id) => {
   return db('jobs')
     .join('profiles', 'profiles.id', '=', 'jobs.client_id')
@@ -16,12 +17,14 @@ const getJobById = (id) => {
     )
     .where('jobs.id', id)
     .first();
-};
+}
 
+// Get all jobs posted by a specific client (profile ID)
 const getJobsByClientId = (client_id) => {
   return db('jobs').where({client_id}).orderBy('created_at', 'desc');
 }
 
+// Create a new job 
 const createJob = async (
   client_id,
   title,
@@ -50,6 +53,7 @@ const createJob = async (
   return job;
 };
 
+// Update a job with only provided fields
 const updateJob = async (
   id,
   title,
@@ -83,10 +87,12 @@ const updateJob = async (
   return job;
 };
 
+// Delete job by ID
 const deleteJob = (id) => {
   return db('jobs').where({id}).del()
 }
 
+// Update only the status field of a job
 const updateJobStatus = async (id, status) => {
   const [job] = await db('jobs')
     .where({id})
@@ -96,9 +102,9 @@ const updateJobStatus = async (id, status) => {
     })
     .returning('*');
   return job;
-};
+}
 
-
+// Get paginated jobs (for public or admin listing)
 const getJobsPaged = async (limit, page) => {
   const offset = (page - 1) * limit;
 

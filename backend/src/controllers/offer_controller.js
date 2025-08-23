@@ -3,7 +3,7 @@ const userModel = require('../models/users_model')
 const profileModel = require('../models/profile_models')
 const jobsModel = require('../models/jobs_model')
 
-
+// Get all offers submitted by the current worker
 const getAllOfferController = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -22,6 +22,7 @@ const getAllOfferController = async (req, res) => {
   }
 }
 
+// Get a specific offer by ID
 const getOfferByIdController = async (req, res) => {
   try {
     const {id} = req.params
@@ -36,6 +37,7 @@ const getOfferByIdController = async (req, res) => {
   }
 }
 
+// Worker creates an offer for a job
 const createOfferController = async (req, res) => {
   const userId = req.user.userId
   const me = await userModel.getUserById(userId)
@@ -53,12 +55,14 @@ const createOfferController = async (req, res) => {
     if (!job_id) {
       return res.status(400).json({message: 'job_id is required' });
     }
+     // Validate optional price
     if (price !== undefined) {
       const p = Number(price)
       if (Number.isNaN(p) || p < 0) {
         return res.status(400).json({message:"price must be a non-negative number"})
       }
     }
+     // Validate optional message
     if (message !== undefined && typeof message !== 'string') {
       return res.status(400).json({message: "message must be a string"})
     }
@@ -89,6 +93,7 @@ const createOfferController = async (req, res) => {
   }
 }
 
+// Update a pending offer (only by its owner)
 const updateOfferController = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -139,6 +144,7 @@ const updateOfferController = async (req, res) => {
   }
 }
 
+// Delete a pending offer (only by its owner)
 const deleteOfferController = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -173,6 +179,7 @@ const deleteOfferController = async (req, res) => {
   }
 }
 
+// Client updates the status of an offer (accept/reject)
 const updateOfferStatusController = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -219,6 +226,7 @@ const updateOfferStatusController = async (req, res) => {
   }
 }
 
+// Client views all offers for a specific job
 const getOffersByJobController = async (req, res) => {
   try {
     const { jobId } = req.params;
@@ -255,5 +263,4 @@ module.exports = {
   updateOfferStatusController,
   updateOfferController,
   getOffersByJobController
-
 }

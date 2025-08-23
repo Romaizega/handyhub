@@ -1,14 +1,19 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import api from "../app/axios";
 
+// Format timestamp to "HH:MM"
 const fmtTime = ts =>
   new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+// Check if two timestamps are on the same day
 const isSameDay = (a, b) => {
   const da = new Date(a), db = new Date(b);
   return da.getFullYear() === db.getFullYear()
       && da.getMonth() === db.getMonth()
       && da.getDate() === db.getDate();
 };
+
+//Human-readable day label (Today, Yesterday, or Date)
 const humanDate = ts => {
   const d = new Date(ts), today = new Date(), yest = new Date();
   yest.setDate(yest.getDate() - 1);
@@ -16,6 +21,7 @@ const humanDate = ts => {
   if (isSameDay(d, yest)) return "Yesterday";
   return d.toLocaleDateString();
 };
+
 
 const ChatThread = ({
   currentProfileId,
@@ -28,7 +34,8 @@ const ChatThread = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const bottomRef = useRef(null);
-
+ 
+  // Fetch chat messages with the other user
   const load = useCallback(async () => {
     if (!otherProfileId) return;
     try {
@@ -44,12 +51,14 @@ const ChatThread = ({
     }
   }, [otherProfileId]);
 
+  // Load messages on mount and poll every 8 seconds
   useEffect(() => {
     load();
     const id = setInterval(load, 8000);
     return () => clearInterval(id);
   }, [load]);
 
+   // Handle sending a new message
   const handleSend = async () => {
     const trimmed = text.trim();
     if (!trimmed || !otherProfileId) return;
@@ -65,7 +74,7 @@ const ChatThread = ({
       setError(e.response?.data?.message || "Failed to send message");
     }
   };
-
+  // Group messages by day and merge bubbles by sender & short time diff
   const dayBuckets = useMemo(() => {
     if (!messages.length) return [];
     const arr = [...messages].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));

@@ -10,9 +10,11 @@ const MyProfile = () => {
   const dispatch = useDispatch()
   const { profile, status, error, notFound } = useSelector(s => s.profile)
   const { user } = useSelector(s => s.auth)
+  
   useEffect(() => {
     if (status === AUTH_STATUS.IDLE) dispatch(getProfile())
   }, [dispatch, status])
+  
   if (status === AUTH_STATUS.LOADING) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">

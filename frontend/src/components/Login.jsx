@@ -7,15 +7,18 @@ const Login = () => {
   const dispatch = useDispatch();
   const { isAuthenticated, status } = useSelector((state) => state.auth)
   const location = useLocation()
+  // Show toast after successful registration
   const justRegistered = location.state?.justRegistered === true
   const navigate = useNavigate()
+  // Form state
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
+  // Show toast once for new registrations
   useEffect(() => {
     if (justRegistered) {
       const appear = setTimeout(() => setShowToast(true), 300);
@@ -28,18 +31,20 @@ const Login = () => {
     }
   }, [justRegistered, navigate, location.pathname]);
 
-const handleLogin = async (e) => {
-  e.preventDefault();
+  // Handle login form submit
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
   if (!username || !password) {
     setError("Please fill in all the fields");
     return;
   }
-  setError("");
+  setError('');
 
   try {
     const payload = await dispatch(loginUser({ username, password })).unwrap();
     const role = payload?.user?.role ?? payload?.role;
+    // Redirect after login
     const from = location.state?.from; 
     const target =
       from ??
@@ -51,7 +56,7 @@ const handleLogin = async (e) => {
   }
 };
 
-
+// If already logged in, redirect user
 if (isAuthenticated) {
   const from = location.state?.from;
   return <Navigate to={from || "/home"} replace />;
@@ -59,6 +64,7 @@ if (isAuthenticated) {
 
   return (
 <>
+   {/* Toast for successful registration */}
   {showToast && (
     <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg flex items-center gap-2 transition-all duration-300 z-50">
       <span>Account created successfully!</span>
@@ -71,6 +77,7 @@ if (isAuthenticated) {
     </div>
   )}
 
+  {/* Login form */}
   <div className="flex justify-center items-center h-screen bg-base-200">
     <div className="card w-93 bg-base-100 shadow-xl p-6">
       <h2 className="text-2xl font-bold mb-4 text-center">Log in</h2>
@@ -88,6 +95,7 @@ if (isAuthenticated) {
           />
         </label>
 
+        {/* Password input with toggle */}
         <label className="input input-bordered flex items-center gap-2 relative">
           <span className="opacity-60">Password</span>
           <input
@@ -107,6 +115,7 @@ if (isAuthenticated) {
           </button>
         </label>
 
+        {/* Error message */}
         {error && <p className="text-red-500 text-sm">{error}</p>}
 
         <button

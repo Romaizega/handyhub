@@ -1,6 +1,7 @@
 const path = require('path')
 const { getSuggestionFromAI } = require('../services/ai_service')
 
+// Controller to generate a job description based on an uploaded file
 exports.generateJobDescription = async (req, res) => {
   try {
     const file = req.file

@@ -2,11 +2,13 @@ import axios from 'axios'
 import store from '../app/store'
 import { setCredentials, clearAuth } from '../features/auth/authSlice'
 
+// Create Axios instance with base URL and cookie support
 const api = axios.create({
   baseURL: '/api',
   withCredentials: true 
 })
 
+// Attach access token to every request if available
 api.interceptors.request.use((config) => {
   const token = store.getState()?.auth?.accessToken
   if (token) config.headers.Authorization = `Bearer ${token}`
@@ -44,7 +46,7 @@ api.interceptors.response.use(
       }
 
       store.dispatch(setCredentials({ accessToken }))
-
+       // Retry original request with new token
       original.headers = original.headers || {}
       original.headers.Authorization = `Bearer ${accessToken}`
       return api(original)

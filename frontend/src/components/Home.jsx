@@ -31,6 +31,7 @@ export default function Home() {
 
   useEffect(() => {
     let alive = true
+     // Fetch latest jobs on mount
     ;(async () => {
       try {
         const { data } = await api.get('/jobs', { params: { limit: 6, order: 'desc' } })
@@ -58,7 +59,7 @@ export default function Home() {
     const query = q.trim()
     navigate(query ? `/jobs?q=${encodeURIComponent(query)}` : '/jobs')
   }
-
+  // Job categories
   const categories = [
     { name: 'Plumbing', icon: WrenchScrewdriverIcon, key: 'plumbing' },
     { name: 'Electrical', icon: BoltIcon, key: 'electrical' },

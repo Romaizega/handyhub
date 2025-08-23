@@ -1,6 +1,7 @@
 const profileModel = require('../models/profile_models')
 const userModel = require('../models/users_model')
 
+// Retrieves all profiles (admin/internal use)
 const getAllProfiles = async(req, res) =>{
   try {
     const profiles = await profileModel.getAllProfiles();
@@ -14,6 +15,7 @@ const getAllProfiles = async(req, res) =>{
   }
 }
 
+// Retrieves a single profile by user ID (internal use)
 const getProfileById = async(req, res) =>{
   try {
     const {id} = req.params
@@ -28,7 +30,7 @@ const getProfileById = async(req, res) =>{
   }
 }
 
-
+// Public endpoint to get both profile and user info by user ID
 const getProfileByUserIdpublic = async (req, res) => {
   const { id } = req.params;
   console.log("received GET /profiles/by-user/:id =", id);
@@ -51,6 +53,7 @@ const getProfileByUserIdpublic = async (req, res) => {
   }
 }
 
+// Public endpoint to fetch only worker profiles
 const getProfilesWorkerPublic = async (req, res) => {
   try {
     const profiles = await profileModel.getAllProfiles();
@@ -65,6 +68,7 @@ const getProfilesWorkerPublic = async (req, res) => {
   }
 }
 
+// Create a new profile (after registration)
 const createProfileController = async(req, res) => {
   const userId = req.user.userId
   const {
@@ -129,6 +133,7 @@ const createProfileController = async(req, res) => {
   }
 }
 
+// Update profile data (including optional avatar upload)
 const updateProfileController = async (req, res) => {
   try {
     const userId = req.user?.userId;
@@ -195,8 +200,9 @@ const updateProfileController = async (req, res) => {
     console.error('Update profile error:', error);
     return res.status(500).json({ message: 'Server error', error: error.message });
   }
-};
+}
 
+// Delete the current user's profile
 const deleteProfileController = async(req, res) => {
   const userId = req.user.userId;
   try {
@@ -209,8 +215,9 @@ const deleteProfileController = async(req, res) => {
     console.error("Delete profile error:", error);
     return res.status(500).json({ message: "Server error", error: error.message });
   }
-};
+}
 
+// Get the profile of the currently authenticated user
 const getMyprofileController = async(req, res) => {
   try {
     const userId = req.user.userId
