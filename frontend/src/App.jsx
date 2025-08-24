@@ -23,6 +23,7 @@ import MessagesInbox from './components/MessagesInbox'
 import Settings from './components/Settings'
 import Blog from './components/Blog'
 import Footer from './components/Footer'
+import HowToChooseWorker from './components/HowToChooseWorker'
 
 function App() { 
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/blog" element={<Blog />} />
+        <Route path="/chooseworker" element={<HowToChooseWorker />} />
         <Route path="/public-profiles/:id" element={<PublicProfileView />} />
         <Route path="/workers" element={<WorkersList />} />
         {/* <Route path="/messages/profile/:id" element={<MessageProfileView />} /> */}
