@@ -18,10 +18,10 @@ const router = express.Router();
 // Get paginated list of jobs
 router.get('/', getJobsPagedController);
 router.get('/jobs', getJobsPagedController);
-// Get job by ID (public)
-router.get('/:id', getJobByIdController);
 // Get jobs created by the authenticated client
 router.get('/myjob', authenticateJWT, getJobsByClientIdController);
+// Get job by ID (public)
+router.get('/:id', getJobByIdController);
 
 // Create a new job (only clients)
 router.post(
