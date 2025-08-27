@@ -24,6 +24,7 @@ import Settings from './components/Settings'
 import Blog from './components/Blog'
 import Footer from './components/Footer'
 import HowToChooseWorker from './components/HowToChooseWorker'
+import HeroWelcome from './components/Welcome'
 
 function App() { 
   return (
@@ -31,6 +32,7 @@ function App() {
       <Navbar />
       <div className="container mx-auto px-4 py-6">
       <Routes>
+        <Route path="/" element={<HeroWelcome />} />
         <Route path="/home" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />

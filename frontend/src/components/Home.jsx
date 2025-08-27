@@ -31,7 +31,6 @@ export default function Home() {
 
   useEffect(() => {
     let alive = true
-     // Fetch latest jobs on mount
     ;(async () => {
       try {
         const { data } = await api.get('/jobs', { params: { limit: 6, order: 'desc' } })
@@ -59,7 +58,7 @@ export default function Home() {
     const query = q.trim()
     navigate(query ? `/jobs?q=${encodeURIComponent(query)}` : '/jobs')
   }
-  // Job categories
+
   const categories = [
     { name: 'Plumbing', icon: WrenchScrewdriverIcon, key: 'plumbing' },
     { name: 'Electrical', icon: BoltIcon, key: 'electrical' },
@@ -71,42 +70,89 @@ export default function Home() {
 
   return (
     <div className="space-y-14 animate-fade-in">
-      {/* HERO */}
-      <section className="hero min-h-[360px] bg-gradient-to-br from-base-200 to-base-100">
-        <div className="hero-content w-full max-w-5xl flex-col text-center">
-          <h1 className="text-4xl font-extrabold">Find reliable help for any home project</h1>
-          <p className="opacity-70 mt-2">Post a job in minutes or browse hundreds of tasks near you.</p>
+      
+      {/* HERO SECTION */}
+      <section className="w-full bg-base-100 py-16 px-4">
+        <div className="max-w-6xl mx-auto text-center mb-12">
+          <h1 className="text-4xl font-extrabold leading-tight">
+            Find reliable help for any home project
+          </h1>
+          <p className="opacity-70 mt-2">
+            Post a job in minutes or browse hundreds of tasks near you.
+          </p>
+        </div>
 
-          <form onSubmit={onSearch} className="mt-6 w-full max-w-2xl mx-auto">
-            <label className="input input-bordered flex items-center gap-2 shadow-md bg-white">
-              <MagnifyingGlassIcon className="w-5 h-5 opacity-60" />
-              <input
-                className="grow"
-                placeholder="Try: paint walls, install shelves, move sofa…"
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-start gap-8">
+          {/* LEFT: Video */}
+          <div className="w-full md:w-1/2">
+            <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-md">
+              <video
+                src="/src/assets/demo.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover"
               />
-              <button className="btn btn-neutral btn-sm" type="submit">Search</button>
-            </label>
-          </form>
+            </div>
+          </div>
 
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-            {!isAuthed ? (
-              <>
-                <Link to="/register" className="btn btn-neutral-content-outline">Create account</Link>
-                <Link to="/jobs" className="btn btn-outline">Browse jobs</Link>
-              </>
-            ) : role === 'client' ? (
-              <>
-                <Link to="/my-jobs" className="btn btn-neutral">My Jobs</Link>
-                <Link to="/jobs" className="btn btn-outline">Find workers</Link>
-              </>
-            ) : (
-              <>
-                <Link to="/jobs" className="btn btn-neutral">Find jobs</Link>
-                <Link to="/my-offers" className="btn btn-outline">My offers</Link>
-              </>
-            )}
+          {/* RIGHT: Text + Search + Buttons */}
+          <div className="w-full md:w-1/2 space-y-6">
+
+            <form onSubmit={onSearch}>
+              <label className="input input-bordered flex items-center gap-2 shadow-md bg-white w-full">
+                <MagnifyingGlassIcon className="w-5 h-5 opacity-60" />
+                <input
+                  className="grow"
+                  placeholder="Try: paint walls, install shelves, move sofa…"
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                />
+                <button className="btn btn-neutral btn-sm" type="submit">
+                  Search
+                </button>
+              </label>
+            </form>
+
+            <div className="flex flex-wrap gap-3">
+              {!isAuthed ? (
+                <>
+                  <Link to="/register" className="btn btn-neutral-content-outline">
+                    Create account
+                  </Link>
+                  <Link to="/jobs" className="btn btn-outline">
+                    Browse jobs
+                  </Link><br /><br />
+            <div className="p-4 bg-base-200 rounded-md">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                AI creates your job post for you
+              </h2>
+              <p className="text-base opacity-70">
+                Just describe the issue or upload a photo — HandyHub will help you write the perfect task for professionals.
+              </p>
+            </div>
+                </>
+              ) : role === 'client' ? (
+                <>
+                  <Link to="/my-jobs" className="btn btn-neutral">
+                    My Jobs
+                  </Link>
+                  <Link to="/workers" className="btn btn-outline">
+                    Find workers
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/jobs" className="btn btn-neutral">
+                    Find jobs
+                  </Link>
+                  <Link to="/my-offers" className="btn btn-outline">
+                    My offers
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </section>
@@ -176,36 +222,36 @@ export default function Home() {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {jobs.map((job) => (
-          <Link
-            key={job.id}
-            to={`/jobs/${job.id}`}
-            className="card bg-base-100 hover:shadow-lg transition hover:scale-[1.01]"
-          >
-            {job.photos?.length > 0 && (
-              <img
-                src={job.photos[0]}
-                alt="Job"
-                className="h-40 w-full object-cover rounded-t"
-              />
-            )}
-            <div className="card-body">
-              <h3 className="card-title text-base">{job.title || `Job #${job.id}`}</h3>
-              <p className="opacity-80 line-clamp-2">{job.description || 'No description'}</p>
-              <div className="mt-2 text-sm opacity-70 flex flex-wrap gap-3">
-                <span className="inline-flex items-center gap-1">
-                  <MapPinIcon className="w-4 h-4" />
-                  {job.city || 'Remote'}
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <BanknotesIcon className="w-4 h-4" />
-                  {job.budget ? `$${job.budget}` : 'Budget: —'}
-                </span>
-              </div>
-              <div className="card-actions justify-end mt-3">
-                <span className="badge badge-outline">{job.category || 'General'}</span>
-              </div>
-            </div>
-          </Link>
+              <Link
+                key={job.id}
+                to={`/jobs/${job.id}`}
+                className="card bg-base-100 hover:shadow-lg transition hover:scale-[1.01]"
+              >
+                {job.photos?.length > 0 && (
+                  <img
+                    src={job.photos[0]}
+                    alt="Job"
+                    className="h-40 w-full object-cover rounded-t"
+                  />
+                )}
+                <div className="card-body">
+                  <h3 className="card-title text-base">{job.title || `Job #${job.id}`}</h3>
+                  <p className="opacity-80 line-clamp-2">{job.description || 'No description'}</p>
+                  <div className="mt-2 text-sm opacity-70 flex flex-wrap gap-3">
+                    <span className="inline-flex items-center gap-1">
+                      <MapPinIcon className="w-4 h-4" />
+                      {job.city || 'Remote'}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <BanknotesIcon className="w-4 h-4" />
+                      {job.budget ? `$${job.budget}` : 'Budget: —'}
+                    </span>
+                  </div>
+                  <div className="card-actions justify-end mt-3">
+                    <span className="badge badge-outline">{job.category || 'General'}</span>
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
         )}
