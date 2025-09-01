@@ -9,6 +9,7 @@ const usersRouter = require('./backend/src/routes/users_router')
 const offerRouter = require('./backend/src/routes/offer_router')
 const messageRouter = require('./backend/src/routes/message_route')
 const aiRouter = require('./backend/src/routes/ai_router')
+const commentRouter = require('./backend/src/routes/comment_router')
 const path = require('path')
 const http = require('http');
 const { Server } = require('socket.io');
@@ -35,6 +36,7 @@ app.use('/api/users', usersRouter)
 app.use('/api/offers', offerRouter)
 app.use('/api/messages', messageRouter)
 app.use('/api/ai', aiRouter)
+app.use('/api/comments', commentRouter)
 
 // Test db connect
 app.get('/db-test', async (req, res) => {
