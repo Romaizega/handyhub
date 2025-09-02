@@ -18,14 +18,14 @@ const getAllCommentsController = async(req, res) => {
 
 const getCommentByWorkerIdController = async(req, res) => {
   try {
-    const userId = req.user.body
+    const userId = req.params.id
     const comments = await commentModel.getCommentByWorkerId(userId)
         if (!comments.length) {
           return res.status(404).json({ message: "Comment not found"})
         }
         return res.status(200).json({message: "Comments", comments})
       } catch (error) {
-        console.error("Get comments error:", error.message)
+        console.error("Get comments error by worker:", error.message)
         res.status(500).json({message: "Server error", error: error.message })
       }
 }

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import api from '../app/axios';
 import MessageButton from './MessageButton';
+import WorkerComments from './WorkerComments';
 
 const PublicProfileView = () => {
   const { id } = useParams();
@@ -65,7 +66,12 @@ const PublicProfileView = () => {
               <p><span className="font-medium">Hourly Rate:</span> ${profile.hourly_rate}</p>
             )}
             <p><span className="font-medium">Rating:</span> ★★★★☆</p>
-            <p><span className="font-medium">Reviews:</span> 12</p>
+            <p className="text-sm text-gray-700">
+              {/* <span className="font-medium">Reviews:</span>{' '} */}
+              <Link to={`/public-profiles/${profile.user_id}/comments`} className="text-blue-600 hover:underline">
+                View all reviews
+              </Link>
+            </p>
             {profile.about && (
               <div>
                 <p className={`text-sm text-gray-700 ${!showFullAbout ? 'line-clamp-3' : ''}`}>
