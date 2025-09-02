@@ -25,6 +25,8 @@ import Blog from './components/Blog'
 import Footer from './components/Footer'
 import HowToChooseWorker from './components/HowToChooseWorker'
 import HeroWelcome from './components/Welcome'
+import WorkerCommentsPage from './components/WorkerCommentsPage'
+
 
 function App() { 
   return (
@@ -39,6 +41,7 @@ function App() {
         <Route path="/blog" element={<Blog />} />
         <Route path="/chooseworker" element={<HowToChooseWorker />} />
         <Route path="/public-profiles/:id" element={<PublicProfileView />} />
+        <Route path="/public-profiles/:id/comments" element={<WorkerCommentsPage />} />
         <Route path="/workers" element={<WorkersList />} />
         {/* <Route path="/messages/profile/:id" element={<MessageProfileView />} /> */}
         <Route path="/messages" element={<MessagesInbox />} />

@@ -4,6 +4,7 @@ import profileReducer from '../features/profiles/profileSlice'
 import jobReducer from '../features/jobs/jobSlice'
 import offerReducer from '../features/offers/offerSlice'
 import messageRudercer from '../features/messages/mesaageSlice'
+import commentReducer from '../features/comments/commentSlice'
 
 // Configure global Redux store with feature slices
 const store = configureStore({
@@ -12,7 +13,8 @@ const store = configureStore({
     profile: profileReducer,
     jobs: jobReducer,
     offers: offerReducer,
-    messages: messageRudercer
+    messages: messageRudercer,
+    comments: commentReducer
   }
 })
 
