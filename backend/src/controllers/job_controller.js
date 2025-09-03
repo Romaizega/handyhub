@@ -93,7 +93,7 @@ const createJobController = async (req, res) => {
     }
 
     // Validate and sanitize job status
-    const allowedStatuses = ['open', 'in_progress', 'done', 'cancelled'];
+    const allowedStatuses = ['open', 'in_progress', 'done', 'cancelled', 'completed'];
     const safeStatus = status && allowedStatuses.includes(status) ? status : 'open';
 
     const job = await jobsModel.createJob(
@@ -218,7 +218,7 @@ const updateJobStatusController = async (req, res) => {
       return res.status(403).json({message: "You can change status only for your jobs"});
     }
 
-    const allowedStatuses = ['open', 'in_progress', 'done', 'cancelled'];
+    const allowedStatuses = ['open', 'in_progress', 'done', 'cancelled', 'completed'];
     if (!status || !allowedStatuses.includes(status)) {
       return res.status(400).json({message: "Invalid status", allowed: allowedStatuses});
     }

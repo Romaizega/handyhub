@@ -208,7 +208,7 @@ const updateOfferStatusController = async (req, res) => {
     }
 
     const { status } = req.body;
-    const allowedStatuses = ['pending', 'accepted', 'rejected'];
+    const allowedStatuses = ['pending', 'accepted', 'rejected', 'completed'];
 
     if (!status || !allowedStatuses.includes(status)) {
       return res.status(400).json({

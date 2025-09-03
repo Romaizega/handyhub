@@ -1,4 +1,4 @@
-import { useParams, useSearchParams, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import api from '../app/axios';
@@ -7,8 +7,8 @@ import WorkerComments from './WorkerComments';
 
 const PublicProfileView = () => {
   const { id } = useParams();
-  const [params] = useSearchParams();
-  const jobId = params.get('job');
+  // const [params] = useSearchParams();
+  // const jobId = params.get('job');
 
   const [profile, setProfile] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -17,7 +17,7 @@ const PublicProfileView = () => {
 
   const { user } = useSelector((state) => state.auth);
   const myProfileId = user?.profile?.id;
-  const isWorker = user?.role === 'worker';
+  // const isWorker = user?.role === 'worker';
 
   useEffect(() => {
     api.get(`/profiles/by-user/${id}`)
@@ -91,11 +91,11 @@ const PublicProfileView = () => {
           </div>
 
           <div className="mt-4 flex gap-2">
-            {isWorker && jobId && (
+            {/* {isWorker && jobId && (
               <Link to={`/offers/create?job=${jobId}`} className="btn btn-sm btn-neutral">
                 Make Offer
               </Link>
-            )}
+            )} */}
 
             {user && !isSelfProfile && (
               <MessageButton
