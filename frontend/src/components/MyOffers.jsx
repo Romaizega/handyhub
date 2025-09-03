@@ -37,10 +37,10 @@ const MyOffers = () => {
             <strong>Status:</strong> {offer.status.charAt(0).toUpperCase() + offer.status.slice(1)}
           </p>
           <p>
-            <strong>Price:</strong> ${offer.price ?? '—'}
+            <strong>My price:</strong> ${offer.price ?? '—'}
           </p>
           <p>
-            <strong>Message:</strong> {offer.message || '—'}
+            <strong>My comment:</strong> {offer.message || '—'}
           </p>
         </div>
       ))}

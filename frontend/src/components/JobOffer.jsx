@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getOffersByJob, updateOfferStatus } from '../features/offers/offerThunk';
 import { AUTH_STATUS } from '../features/auth/authConstants';
 import WorkerInfo from '../components/WorkerInfo';
@@ -10,6 +10,7 @@ import MessageButton from './MessageButton';
 const JobOffer = () => {
   const { id: jobId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate()
    // Offers state from Redux
   const { offers, status, error } = useSelector((s) => s.offers)
   const { user } = useSelector((s) => s.auth);
@@ -25,12 +26,18 @@ const JobOffer = () => {
 const handleUpdateStatus = async (offerId, newStatus) => {
   try {
     await dispatch(updateOfferStatus({ id: offerId, status: newStatus })).unwrap();
-    dispatch(getOffersByJob(jobId));
+    
+    if (newStatus === 'completed') {
+      navigate(`/comments/new?offer=${offerId}`);
+    } else {
+      dispatch(getOffersByJob(jobId));
+    }
+
   } catch (err) {
     console.error("Failed to update status:", err);
     alert("Failed to update offer status");
   }
-};
+}
 
 // Loading/error states
   if (status === AUTH_STATUS.LOADING) return <div>Loading offers…</div>;
@@ -49,12 +56,12 @@ const handleUpdateStatus = async (offerId, newStatus) => {
            {/* Price and message */}
           {offer.price && (
             <p>
-              <strong>Price:</strong> ${offer.price}
+              <strong> Worker's price:</strong> ${offer.price}
             </p>
           )}
           {offer.message && (
             <p>
-              <strong>Message:</strong> {offer.message}
+              <strong>Worker's comment:</strong> {offer.message}
             </p>
           )}
           {/* Action buttons for pending offers */}
@@ -82,7 +89,21 @@ const handleUpdateStatus = async (offerId, newStatus) => {
             myProfileId={user?.profile?.id}
           />
         </div>
-
+          {offer.status === 'accepted' && (
+            <div className="mt-3">
+              <button
+                className="btn btn-sm btn-neutral"
+                onClick={() => {
+                  const confirmed = window.confirm('Are you sure the job is completed and you want to leave a review?');
+                  if (confirmed) {
+                    handleUpdateStatus(offer.id, 'completed');
+                  }
+                }}
+              >
+                Complete & Leave Review
+              </button>
+            </div>
+          )}
         </div>
       ))}
     </div>
