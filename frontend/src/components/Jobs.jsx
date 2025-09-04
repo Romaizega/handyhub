@@ -49,7 +49,7 @@ const AllJobs = () => {
       {/* Filters */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div className="flex flex-wrap gap-2">
-          {['all', 'open', 'in_progress', 'completed', 'cancelled'].map(status => (
+          {['all', 'open', 'in_progress', 'done', 'cancelled'].map(status => (
             <button
               key={status}
               className={`btn btn-sm ${statusFilter === status ? 'btn-neutral' : 'btn-outline'}`}

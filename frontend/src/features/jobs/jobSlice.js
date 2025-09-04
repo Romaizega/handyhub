@@ -59,7 +59,16 @@ const jobSlice = createSlice({
       })
       .addCase(updateJob.fulfilled, (state, action)=>{
         state.status = AUTH_STATUS.SUCCEEDDED
-        state.jobs = action.payload
+        
+        const jobUpdateAll = state.jobs.findIndex(job => job.id === action.payload.id);
+        if (jobUpdateAll !== -1) {
+        state.jobs[jobUpdateAll] = action.payload;
+        }
+
+        const jobUpdateMine = state.myjobs.findIndex(job => job.id === action.payload.id);
+        if (jobUpdateMine !== -1) {
+          state.myjobs[jobUpdateMine] = action.payload;
+        }
       })
       .addCase(updateJob.rejected, (state, action)=>{
         state.status = AUTH_STATUS.FAILED
