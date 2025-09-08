@@ -37,8 +37,17 @@ const jobSlice = createSlice({
         state.status = AUTH_STATUS.FAILED;
         state.error = action.payload;
       })
+      .addCase(getMyJobs.pending, (state) => {
+        state.status = AUTH_STATUS.LOADING;
+        state.error = null;
+      })
       .addCase(getMyJobs.fulfilled, (state, action) => {
+        state.status = AUTH_STATUS.SUCCEEDDED;
         state.myjobs = action.payload;
+      })
+      .addCase(getMyJobs.rejected, (state, action) => {
+        state.status = AUTH_STATUS.FAILED;
+        state.error = action.payload || "Failed to fetch my jobs";
       })
       .addCase(createJob.pending, (state)=>{
         state.status = AUTH_STATUS.LOADING
@@ -46,7 +55,7 @@ const jobSlice = createSlice({
       })
       .addCase(createJob.fulfilled, (state, action)=>{
         state.status = AUTH_STATUS.SUCCEEDDED
-        state.jobs = action.payload
+        state.jobs.push(action.payload)
       })
       .addCase(createJob.rejected, (state, action)=>{
         state.status = AUTH_STATUS.FAILED
@@ -84,7 +93,7 @@ const jobSlice = createSlice({
         state.jobs = action.payload
       })
       .addCase(updateJobStatus.rejected, (state, action)=>{
-        state.jobs = AUTH_STATUS.FAILED
+        state.status = AUTH_STATUS.FAILED
         state.error = action.payload || "Failed to update job status"
       })
 
