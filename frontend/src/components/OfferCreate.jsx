@@ -83,7 +83,7 @@ const OfferCreate = () => {
             {error && <div className="alert alert-error">{error}</div>}
             <button
               type="submit"
-              className="btn btn-primary w-full"
+              className="btn btn-neutral w-full"
               disabled={loading}
             >
               {loading ? 'Submitting…' : 'Submit Offer'}

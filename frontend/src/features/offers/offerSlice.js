@@ -49,7 +49,7 @@ const offerSlice = createSlice ({
       })
       .addCase(createOffer.fulfilled, (state, action)=>{
         state.status = AUTH_STATUS.SUCCEEDDED
-        state.offers = action.payload
+        state.offers.push(action.payload)
       })
       .addCase(createOffer.rejected, (state, action)=>{
         state.status = AUTH_STATUS.FAILED
