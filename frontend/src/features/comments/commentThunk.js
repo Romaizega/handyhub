@@ -35,11 +35,13 @@ const getCommentsByWorkerId = createAsyncThunk(
 const createComment = createAsyncThunk(
   'comments/createComment',
   async ({
+    jobId,
     text,
     photos
   }, {rejectWithValue}) =>{
     try {
       const formData = new FormData();
+      formData.append('jobId', jobId)
       formData.append('text', text);
       photos?.forEach((file) => {
         formData.append('photos', file);
@@ -58,8 +60,22 @@ const createComment = createAsyncThunk(
   }
 )
 
+const getCommentByJobId = createAsyncThunk(
+  'comments/getCommnetsByJobId',
+  async(jobId, [rejectWithValue]) => {
+    try {
+      const {data} = await api.get(`/comments/job/${jobId}`)
+      return data.comments
+    } catch (error) {
+      const message = error.response?.data?.message || error.message || "Get comments by job failed"
+      return rejectWithValue(message)
+    }
+  }
+)
+
 export {
   getAllComments,
   getCommentsByWorkerId,
-  createComment
+  createComment,
+  getCommentByJobId
 }

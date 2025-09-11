@@ -3,7 +3,8 @@ import { AUTH_STATUS } from "../auth/authConstants";
 import { 
   getAllComments,
   getCommentsByWorkerId,
-  createComment
+  createComment,
+  getCommentByJobId
  } from "./commentThunk";
 
 const initialState = {
@@ -54,11 +55,15 @@ const commentSlice = createSlice( {
       })
       .addCase(createComment.fulfilled, (state, action)=>{
         state.status = AUTH_STATUS.SUCCEEDDED
-        state.comments = action.payload
+        state.comments.push(action.payload)
       })
       .addCase(createComment.rejected, (state, action)=>{
         state.status = AUTH_STATUS.FAILED
         state.error = action.payload || "Failed to create comment"
+      })
+      .addCase(getCommentByJobId.fulfilled, (state, action) => {
+        state.status = AUTH_STATUS.SUCCEEDDED;
+        state.comments = action.payload
       })
   }
 }
