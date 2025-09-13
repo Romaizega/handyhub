@@ -26,6 +26,7 @@ import Footer from './components/Footer'
 import HowToChooseWorker from './components/HowToChooseWorker'
 import HeroWelcome from './components/Welcome'
 import WorkerCommentsPage from './components/WorkerCommentsPage'
+import CreateCommentPage from './components/CreateCommentPage'
 
 
 function App() { 
@@ -42,6 +43,7 @@ function App() {
         <Route path="/chooseworker" element={<HowToChooseWorker />} />
         <Route path="/public-profiles/:id" element={<PublicProfileView />} />
         <Route path="/public-profiles/:id/comments" element={<WorkerCommentsPage />} />
+        <Route path="/comments/new" element={<CreateCommentPage/>}/>
         <Route path="/workers" element={<WorkersList />} />
         {/* <Route path="/messages/profile/:id" element={<MessageProfileView />} /> */}
         <Route path="/messages" element={<MessagesInbox />} />
