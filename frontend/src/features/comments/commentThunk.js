@@ -47,7 +47,7 @@ const createComment = createAsyncThunk(
         formData.append('photos', file);
       });
 
-    const {data} = await api.post('comments', formData, {
+    const {data} = await api.post('/comments', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
