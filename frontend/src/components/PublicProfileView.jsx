@@ -3,21 +3,18 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import api from '../app/axios';
 import MessageButton from './MessageButton';
-import WorkerComments from './WorkerComments';
+import WorkerRating from './WorkerRating';
 
 const PublicProfileView = () => {
   const { id } = useParams();
-  // const [params] = useSearchParams();
-  // const jobId = params.get('job');
-
   const [profile, setProfile] = useState(null);
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState('');
   const [showFullAbout, setShowFullAbout] = useState(false);
+  const [averageRating, setAverageRating] = useState(null); 
 
   const { user } = useSelector((state) => state.auth);
   const myProfileId = user?.profile?.id;
-  // const isWorker = user?.role === 'worker';
 
   useEffect(() => {
     api.get(`/profiles/by-user/${id}`)
@@ -65,13 +62,27 @@ const PublicProfileView = () => {
             {profile.hourly_rate && (
               <p><span className="font-medium">Hourly Rate:</span> ${profile.hourly_rate}</p>
             )}
-            <p><span className="font-medium">Rating:</span> ★★★★☆</p>
+            {averageRating ? (
+              <p>
+                <span className="font-medium">Rating:</span>{' '}
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <i
+                    key={i}
+                    className={`bi ${i <= Math.round(averageRating) ? 'bi-star-fill text-yellow-500' : 'bi-star text-gray-300'}`}
+                  />
+                ))}
+                <span className="ml-1 text-sm text-gray-500">⭐({averageRating})</span>
+              </p>
+            ) : (
+              <p><span className="font-medium">Rating:</span> No reviews yet</p>
+            )}
+
             <p className="text-sm text-gray-700">
-              {/* <span className="font-medium">Reviews:</span>{' '} */}
               <Link to={`/public-profiles/${profile.user_id}/comments`} className="text-blue-600 hover:underline">
                 View all reviews
               </Link>
             </p>
+
             {profile.about && (
               <div>
                 <p className={`text-sm text-gray-700 ${!showFullAbout ? 'line-clamp-3' : ''}`}>
@@ -87,16 +98,9 @@ const PublicProfileView = () => {
                 )}
               </div>
             )}
-
           </div>
 
           <div className="mt-4 flex gap-2">
-            {/* {isWorker && jobId && (
-              <Link to={`/offers/create?job=${jobId}`} className="btn btn-sm btn-neutral">
-                Make Offer
-              </Link>
-            )} */}
-
             {user && !isSelfProfile && (
               <MessageButton
                 profileId={profile.id}
@@ -107,10 +111,10 @@ const PublicProfileView = () => {
         </div>
       </div>
 
-      {/* COMPLETED JOBS (GALLERY) */}
+      <WorkerRating workerId={profile.user_id} onAverageRating={setAverageRating} />
+
       <div className="mt-10">
         <h2 className="text-xl font-semibold mb-4">Completed Works</h2>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((num) => (
             <div
