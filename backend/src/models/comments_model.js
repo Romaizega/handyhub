@@ -16,17 +16,21 @@ const getCommentByWorkerId = (workerId) => {
 const createComment = async (
   client_profile_id,
   text,
-  photos,
-  worker_profile_id
+  rating,
+  worker_profile_id,
+  job_id,
+  photos
 ) => {
   const [comment] = await db('comments')
   .insert({
     client_profile_id,
     text,
+    rating,
+    worker_profile_id,
+    job_id,
     photos: photos == null
       ? null
       : JSON.stringify(Array.isArray(photos) ? photos : [String(photos)]),
-    worker_profile_id
   })
   .returning('*')
   return comment

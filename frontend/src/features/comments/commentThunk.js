@@ -34,27 +34,28 @@ const getCommentsByWorkerId = createAsyncThunk(
 
 const createComment = createAsyncThunk(
   'comments/createComment',
-  async ({
-    jobId,
-    text,
-    photos
-  }, {rejectWithValue}) =>{
+  async ({ offerId, worker_id, text, rating, photos }, { rejectWithValue }) => {
     try {
       const formData = new FormData();
-      formData.append('jobId', jobId)
+      formData.append('offerId', offerId);
+      formData.append('worker_id', worker_id);
       formData.append('text', text);
+      formData.append('rating', rating);
+
       photos?.forEach((file) => {
         formData.append('photos', file);
       });
 
-    const {data} = await api.post('/comments', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-    return data.comment
+      const { data } = await api.post('/comments', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      return data.comment;
     } catch (error) {
-      const message = error.response?.data?.message || error.message || 'Creating comment failed';
+      const message =
+        error.response?.data?.message || error.message || 'Creating comment failed';
       return rejectWithValue(message);
     }
   }

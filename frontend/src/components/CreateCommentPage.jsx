@@ -36,11 +36,11 @@ const CreateCommentPage = () => {
       await dispatch(createComment({
         ...formData,
         photos,
-        offer_id: offerId,
+        offerId: offerId,
         worker_id: workerId,
       })).unwrap();
       
-      navigate(`/workers/${workerId}`);
+      navigate(`/public-profiles/${workerId}/comments`);
     } catch (error) {
       console.error('Failed to create comment:', error);
     }
