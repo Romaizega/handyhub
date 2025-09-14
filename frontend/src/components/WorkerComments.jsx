@@ -3,25 +3,31 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getCommentsByWorkerId } from '../features/comments/commentThunk';
 import { AUTH_STATUS } from '../features/auth/authConstants';
 
-const WorkerComments = ({ workerId }) => {
+const WorkerComments = ({ workerId, onAverageRating }) => {
   const dispatch = useDispatch();
   const { comments, status, error } = useSelector(state => state.comments);
   const [ratingFilter, setRatingFilter] = useState('all');
 
   useEffect(() => {
-    if (workerId) dispatch(getCommentsByWorkerId(workerId));
-  }, [dispatch, workerId]);
+    if (workerId) {
+      dispatch(getCommentsByWorkerId(workerId)).then((action) => {
+        const data = action.payload;
+        if (Array.isArray(data) && data.length > 0 && typeof onAverageRating === 'function') {
+          const avg = (
+            data.reduce((sum, c) => sum + c.rating, 0) / data.length
+          ).toFixed(1);
+          onAverageRating(avg);
+        } else {
+          onAverageRating(null);
+        }
+      });
+    }
+  }, [dispatch, workerId, onAverageRating]);
 
   const filtered = useMemo(() => {
-    return comments.filter(comment => {
-      if (ratingFilter === 'all') return true;
-      if (ratingFilter === '5') return comment.rating === 5;
-      if (ratingFilter === '4') return comment.rating === 4;
-      if (ratingFilter === '3') return comment.rating === 3;
-      if (ratingFilter === '2') return comment.rating === 2;
-      if (ratingFilter === '1') return comment.rating === 1;
-      return true;
-    });
+    if (ratingFilter === 'all') return comments;
+    const rating = Number(ratingFilter);
+    return comments.filter(comment => comment.rating === rating);
   }, [comments, ratingFilter]);
 
   if (status === AUTH_STATUS.LOADING) return <p>Loading comments...</p>;
@@ -48,23 +54,33 @@ const WorkerComments = ({ workerId }) => {
       ) : (
         <div className="grid gap-4">
           {filtered.map(comment => (
-            <div key={comment.id} className="card bg-base-100 shadow-md p-4">
-              <div className="flex items-center gap-2 mb-2">
-                {[...Array(5)].map((_, i) => (
-                  <i
-                    key={i}
-                    className={`bi ${i < comment.rating ? 'bi-star-fill text-yellow-500' : 'bi-star'}`}
-                  ></i>
-                ))}
-                <span className="text-sm text-gray-500 ml-auto">
-                  {new Date(comment.created_at).toLocaleDateString()}
+            <div key={comment.id} className="bg-white p-4 rounded shadow-sm border">
+              <div className="flex justify-between items-center mb-2">
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <i
+                      key={i}
+                      className={`bi ${i <= comment.rating ? 'bi-star-fill text-yellow-500' : 'bi-star text-gray-300'}`}
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-500">
+                  {new Date(comment.created_at).toLocaleDateString('en-GB')}
                 </span>
               </div>
-              <p>{comment.text}</p>
+
+              <p className="text-gray-800 mb-3">{comment.text}</p>
+
               {comment.photos?.length > 0 && (
-                <div className="mt-3 flex gap-2 flex-wrap">
+                <div className="flex gap-2 flex-wrap">
                   {comment.photos.map((url, idx) => (
-                    <img key={idx} src={url} alt="attached" className="w-24 h-24 object-cover rounded" />
+                    <a key={idx} href={url} target="_blank" rel="noreferrer">
+                      <img
+                        src={url}
+                        alt={`Comment attachment ${idx + 1}`}
+                        className="w-24 h-24 object-cover rounded border"
+                      />
+                    </a>
                   ))}
                 </div>
               )}

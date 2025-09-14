@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import api from '../app/axios';
+import WorkerRating from './WorkerRating'; // 🆕 импорт
 
 const WorkersList = () => {
   const [profiles, setProfiles] = useState([]);
@@ -14,7 +15,9 @@ const WorkersList = () => {
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedSkill, setSelectedSkill] = useState('');
 
-  const { user } = useSelector((state) => state.auth); 
+  const [averageRatings, setAverageRatings] = useState({});
+
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     api.get('/profiles/workers')
@@ -65,7 +68,6 @@ const WorkersList = () => {
     <div className="max-w-6xl mx-auto px-4 py-6">
       <h1 className="text-3xl font-bold mb-6 text-center">Worker Profiles</h1>
 
-      {/* ФИЛЬТРЫ */}
       <div className="flex flex-wrap gap-4 justify-center mb-6">
         <select
           value={selectedCity}
@@ -90,7 +92,6 @@ const WorkersList = () => {
         </select>
       </div>
 
-      {/* КАРТОЧКИ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredProfiles.map(profile => (
           <div
@@ -102,11 +103,23 @@ const WorkersList = () => {
                 {profile.display_name || `Worker #${profile.id}`}
               </h2>
 
-              {/* Рейтинг */}
+            
               <div className="flex items-center text-yellow-500 text-sm mb-2">
-                <span className="mr-1">⭐ 4.7</span>
-                <span className="text-gray-500 ml-1">(23 reviews)</span>
+                {averageRatings[profile.user_id] ? (
+                  <>
+                    <span className="mr-1">⭐ {averageRatings[profile.user_id]}</span>
+                  </>
+                ) : (
+                  <span className="text-gray-400">No reviews yet</span>
+                )}
               </div>
+
+              <WorkerRating
+                workerId={profile.user_id}
+                onAverageRating={(avg) =>
+                  setAverageRatings(prev => ({ ...prev, [profile.user_id]: avg }))
+                }
+              />
 
               {profile.city && (
                 <p className="text-sm text-gray-500">
