@@ -2,6 +2,7 @@ const commentModel = require('../models/comments_model')
 const profileModel = require('../models/profile_models')
 const jobsModel = require('../models/jobs_model')
 const userModel = require('../models/users_model')
+const offerModel = require('../models/offers_model')
 
 
 const getAllCommentsController = async(req, res) => {
@@ -34,23 +35,24 @@ const getCommentByWorkerIdController = async(req, res) => {
 const createCommentController = async (req, res) => {
   try {
     const userId = req.user?.userId;
+    
     const user = await userModel.getUserById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
-
+    
     if (user.role !== 'client') {
       return res.status(403).json({ message: "Only clients can leave reviews" });
     }
-
+    
+    console.log("req.user.userId:", userId);
     const profile = await profileModel.getProfileByUserId(userId);
     if (!profile) {
       return res.status(400).json({ message: "Client profile not found" });
     }
-
+    
     const { text, rating, offerId } = req.body;
     const files = req.files || [];
     const photoPaths = files.map(f => `/uploads/comments/${f.filename}`);
 
-    // Basic validation
     if (!offerId) {
       return res.status(400).json({ message: "Offer ID is required" });
     }
@@ -58,6 +60,11 @@ const createCommentController = async (req, res) => {
     const offer = await offerModel.getOfferById(offerId);
     if (!offer) {
       return res.status(404).json({ message: "Offer not found" });
+    }
+
+    const workerProfile = await profileModel.getProfileByUserId(offer.worker_profile_id);
+    if (!workerProfile) {
+      return res.status(404).json({ message: "Worker profile not found" });
     }
 
     if (!text || text.trim().length < 3) {
@@ -69,14 +76,14 @@ const createCommentController = async (req, res) => {
       return res.status(400).json({ message: "Rating must be a number between 1 and 5" });
     }
 
-    const comment = await commentModel.createComment({
-      author_profile_id: profile.id,
-      worker_user_id: offer.worker_user_id,
-      offer_id: offer.id,
-      rating: parsedRating,
-      text: text.trim(),
-      photos: photoPaths,
-    });
+    const comment = await commentModel.createComment(
+      profile.id,
+      text.trim(),
+      parsedRating,
+      workerProfile.id,
+      offer.job_id,
+      photoPaths,
+    );
 
     return res.status(201).json({ message: "Comment created", comment });
   } catch (error) {
@@ -84,6 +91,7 @@ const createCommentController = async (req, res) => {
     return res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 
 module.exports = {
   getAllCommentsController,

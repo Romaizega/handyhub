@@ -16,7 +16,10 @@ const WorkerComments = ({ workerId }) => {
     return comments.filter(comment => {
       if (ratingFilter === 'all') return true;
       if (ratingFilter === '5') return comment.rating === 5;
-      if (ratingFilter === '4+') return comment.rating >= 4;
+      if (ratingFilter === '4') return comment.rating === 4;
+      if (ratingFilter === '3') return comment.rating === 3;
+      if (ratingFilter === '2') return comment.rating === 2;
+      if (ratingFilter === '1') return comment.rating === 1;
       return true;
     });
   }, [comments, ratingFilter]);
@@ -29,7 +32,7 @@ const WorkerComments = ({ workerId }) => {
       <h2 className="text-xl font-semibold mb-4">Worker Reviews</h2>
 
       <div className="mb-4 flex gap-2">
-        {['all', '5', '4+'].map(val => (
+        {['all', '5', '4', '3', '2', '1'].map(val => (
           <button
             key={val}
             className={`btn btn-sm ${ratingFilter === val ? 'btn-neutral' : 'btn-outline'}`}
