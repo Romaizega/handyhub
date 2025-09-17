@@ -27,6 +27,7 @@ import HowToChooseWorker from './components/HowToChooseWorker'
 import HeroWelcome from './components/Welcome'
 import WorkerCommentsPage from './components/WorkerCommentsPage'
 import CreateCommentPage from './components/CreateCommentPage'
+import AdminUsers from './components/AdminUsers'
 
 
 function App() { 
@@ -117,6 +118,14 @@ function App() {
             <ProtectedRoute>
               <ProfileEdit />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <RoleRoute allowed={['admin']}>
+              <AdminUsers />
+            </RoleRoute>
           }
         />
 
