@@ -11,7 +11,7 @@ exports.getSuggestionFromAI = async (filename = "") => {
   try {
     const imagePath = path.join(process.cwd(), "uploads", "jobs", filename);
 
-    console.log("📸 Checking image path:", imagePath);
+    console.log("Checking image path:", imagePath);
 
     if (!fs.existsSync(imagePath)) {
       throw new Error(`Image file not found: ${imagePath}`);

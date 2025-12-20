@@ -13,7 +13,7 @@ const AdminUsers = () => {
   console.log("AdminUsers mounted, user:", user);
   const fetchUsers = async () => {
     try {
-      const res = await api.get("/api/admin/users");
+      const res = await api.get("/admin/users");
       setUsers(res.data.users);
     } catch (error) {
       setError("Failed to fetch users", error);
@@ -22,12 +22,11 @@ const AdminUsers = () => {
     }
   };
 
-  // Повысить до админа
   const promoteToAdmin = async (id) => {
     try {
-      await api.patch("/api/admin/check", { userId: id });
+      await api.patch("/admin/check", { userId: id });
       setMessage("User promoted successfully");
-      fetchUsers(); // обновим список
+      fetchUsers(); 
     } catch (error) {
       setError("Failed to promote user", error);
     }
