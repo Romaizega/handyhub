@@ -30,9 +30,12 @@ const loginUser = createAsyncThunk(
 
       dispatch(clearProfile())
       const me = await api.get('/auth/me')
+      const user = me.data
       dispatch(setUser(me.data))
       await dispatch(getProfile())
-      return {accessToken}
+      console.log("me data from /auth/me:", user);
+
+      return {accessToken, user}
       
     } catch (error) {
       dispatch(clearAuth())

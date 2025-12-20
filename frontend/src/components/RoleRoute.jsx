@@ -3,6 +3,8 @@ import { Navigate } from 'react-router-dom'
 
 export default function RoleRoute({ allowed = [], children }) {
   const { user } = useSelector(state => state.auth)
+  console.log("RoleRoute:", user);
+
   
   if (!user) return <Navigate to="/login" replace />
 

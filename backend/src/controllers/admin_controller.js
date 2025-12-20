@@ -13,9 +13,9 @@ const listUser = async (req, res) => {
 }
 
 const checkUserorAdmin = async (req, res) => {
-  const {userId} = req.params
+  const {userId} = req.body
   try {
-    const user = (await db('users').where({id: userId})).first()
+    const user = await db('users').where({id: userId}).first()
     if(!user) {
       return res.status(404).json({message: "User not found"})
     }
