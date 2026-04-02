@@ -15,9 +15,9 @@ export function RotatingCube() {
     <mesh ref={cubeRef} scale={2} castShadow>
       <boxGeometry args={[1, 1, 1]} />
       <meshStandardMaterial
-        color="#181717ff"          // чисто чёрный
-        roughness={0.3}         // чуть-чуть отражений
-        metalness={0.8}         // лёгкий блеск
+        color="#181717ff"          
+        roughness={0.3}         
+        metalness={0.8}         
       />
     </mesh>
   )
