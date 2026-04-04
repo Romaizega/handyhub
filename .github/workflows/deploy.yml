@@ -24,7 +24,8 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_ed25519 ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} << 'EOF'
             cd ~/handyhub
-            git pull origin main
+            git fetch origin main
+            git reset --hard origin/main
             docker compose down || true
             docker compose up -d --build
             docker image prune -f
