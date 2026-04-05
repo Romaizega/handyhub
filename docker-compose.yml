@@ -1,13 +1,12 @@
 services:
   db:
     image: postgres:16-alpine
+    mem_limit: 128m
     restart: unless-stopped
     environment:
       POSTGRES_USER: handyhub
       POSTGRES_PASSWORD: handyhub
       POSTGRES_DB: handyhub
-    ports:
-      - "5432:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
     healthcheck:
@@ -18,32 +17,27 @@ services:
 
   api:
     build: .
+    mem_limit: 384m
     restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
     env_file: .env
-    ports:
-      - "5000:5000"
+    expose:
+      - "5000"
     volumes:
       - ./uploads:/app/uploads
 
   frontend:
-    image: node:22-alpine
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    mem_limit: 128m
     restart: unless-stopped
-    working_dir: /app
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-      - WATCHPACK_POLLING=true
-      - VITE_API_URL=/api
-    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0"
-    ports:
-      - "5173:5173"
     depends_on:
       - api
+    ports:
+      - "80:80"
 
 volumes:
   pg_data:
