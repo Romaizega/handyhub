@@ -10,7 +10,7 @@ COPY . .
 ARG VITE_API_URL=/api
 ENV VITE_API_URL=$VITE_API_URL
 
-RUN NODE_OPTIONS="--max-old-space-size=256" npm run build
+RUN NODE_OPTIONS="--max-old-space-size=512" npm run build
 
 FROM nginx:alpine
 
