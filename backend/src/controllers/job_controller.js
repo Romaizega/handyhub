@@ -9,10 +9,7 @@ const path = require('path')
 const getAllJobsController = async(req, res) => {
   try {
     const jobs = await jobsModel.getAllJobs()
-    if(jobs.length < 1){
-      res.status(400).json({message: "Jobs list is empty"})
-    }
-    res.status(200).json({message: "Got all jobs", jobs})
+    return res.status(200).json({message: "Got all jobs", jobs})
   } catch (error) {
     console.error("Get all jobs error", error.message);
     res.status(500).json({message: "Server error", error: error.message})
