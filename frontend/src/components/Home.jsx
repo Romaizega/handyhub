@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
+import demoVideo from '../assets/demo.mp4'
 import api from '../app/axios'
 
 import {
@@ -87,7 +88,7 @@ export default function Home() {
           <div className="w-full md:w-1/2">
             <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-md">
               <video
-                src="/src/assets/demo.mp4"
+                src={demoVideo}
                 autoPlay
                 muted
                 loop
