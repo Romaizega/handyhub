@@ -112,28 +112,13 @@ const PublicProfileView = () => {
       </div>
 
       <WorkerRating workerId={profile.user_id} onAverageRating={setAverageRating} />
-
-      <div className="mt-10">
-        <h2 className="text-xl font-semibold mb-4">Completed Works</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6].map((num) => (
-            <div
-              key={num}
-              className="rounded-lg overflow-hidden border shadow-sm bg-white hover:shadow-md transition"
-            >
-              <img
-                src={`https://placehold.co/600x400?text=Work+${num}`}
-                alt={`Work ${num}`}
-                className="w-full h-40 object-cover"
-              />
-              <div className="p-3 text-sm text-gray-700">
-                <h3 className="font-semibold mb-1">Job Example {num}</h3>
-              </div>
-            </div>
-          ))}
+      {userData.role === 'worker' && (
+        <div className="mt-10">
+          <h2 className="text-xl font-semibold mb-4">Completed Works</h2>
+          <p className="text-gray-500 text-sm">No completed works yet.</p>
         </div>
-      </div>
-    </div>
+      )}
+          </div>
   );
 };
 
