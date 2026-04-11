@@ -16,13 +16,15 @@ const AdminUsers = () => {
       const res = await api.get("/admin/users");
       setUsers(res.data.users);
     } catch (error) {
-      setError("Failed to fetch users", error);
+      setError("Failed to fetch users:", + error.message);
     } finally {
       setLoading(false);
     }
   };
 
   const promoteToAdmin = async (id) => {
+    setError(null)
+    setMessage(null)
     try {
       await api.patch("/admin/check", { userId: id });
       setMessage("User promoted successfully");
