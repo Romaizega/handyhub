@@ -6,7 +6,7 @@ import jobReducer from '../features/jobs/jobSlice'
 import offerReducer from '../features/offers/offerSlice'
 import messageRudercer from '../features/messages/mesaageSlice'
 import commentReducer from '../features/comments/commentSlice'
-import { storage } from "three/tsl";
+import storage from 'redux-persist/lib/storage';
 
 // Configure global Redux store with feature slices
 const authPersistConfig = {
