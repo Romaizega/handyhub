@@ -22,6 +22,19 @@ const AdminUsers = () => {
     }
   };
 
+  const deleteUser = async (id) => {
+    setError(null)
+    setMessage(null)
+    if (!window.confirm('Are you sure?')) return
+    try {
+      await api.delete(`/admin/users/${id}`)
+      setMessage("User deleted")
+      fetchUsers()
+    } catch (error) {
+      setError("Failed to delete user: " + error.message)
+    }
+  };
+
   const promoteToAdmin = async (id) => {
     setError(null)
     setMessage(null)
@@ -72,13 +85,15 @@ const AdminUsers = () => {
                 <td>{u.role}</td>
                 <td>{new Date(u.created_at).toLocaleDateString()}</td>
                 <td>
-                  {u.role !== "admin" ? (
-                    <button
-                      onClick={() => promoteToAdmin(u.id)}
-                      className="btn btn-sm btn-success"
-                    >
-                      Promote
-                    </button>
+                  {u.role !== 'admin' ? (
+                    <div className="flex gap-2">
+                      <button onClick={() => promoteToAdmin(u.id)} className="btn btn-sm btn-success">
+                        Promote
+                      </button>
+                      <button onClick={() => deleteUser(u.id)} className="btn btn-sm btn-error">
+                        Delete
+                      </button>
+                    </div>
                   ) : (
                     <span className="text-gray-500">Already Admin</span>
                   )}
