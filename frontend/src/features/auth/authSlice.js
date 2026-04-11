@@ -1,11 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { AUTH_STATUS } from './authConstants'
-import { 
-  registerUser, 
-  deleteAccount,
-  updateEmail,
-  updatePassword
-} from "./authThunk";
+
 
 const initialState = {
   user: null,
@@ -39,38 +34,38 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(registerUser.pending, (state) => {
+      .addCase('auth/registerUser/pending', (state) => {
         state.status = AUTH_STATUS.LOADING
         state.error = null
       })
-      .addCase(registerUser.fulfilled, (state) => {
+      .addCase('auth/registerUser/fulfilled', (state) => {
         state.status = AUTH_STATUS.SUCCEEDDED
       })
-      .addCase(registerUser.rejected, (state, action) => {
+      .addCase('auth/registerUser/rejected', (state, action) => {
         state.status = AUTH_STATUS.FAILED
         state.error = action.payload
       })
-      .addCase(updateEmail.fulfilled, (state, action) => {
+      .addCase('auth/updateEmail/fulfilled', (state, action) => {
         if (state.user) state.user.email = action.payload
         state.status = AUTH_STATUS.SUCCEEDDED
       })
-      .addCase(updateEmail.rejected, (state, action) => {
+      .addCase('auth/updateEmail/rejected', (state, action) => {
         state.error = action.payload
         state.status = AUTH_STATUS.FAILED
       })
-      .addCase(updatePassword.fulfilled, (state) => {
+      .addCase('auth/updatePassword/fulfilled', (state) => {
         state.status = AUTH_STATUS.SUCCEEDDED
       })
-      .addCase(updatePassword.rejected, (state, action) => {
+      .addCase('auth/updatePassword/rejected', (state, action) => {
         state.error = action.payload
         state.status = AUTH_STATUS.FAILED
       })
-      .addCase(deleteAccount.fulfilled, (state) => {
+      .addCase('auth/deleteAccount/fulfilled', (state) => {
         state.user = null
         state.accessToken = null
         state.status = AUTH_STATUS.IDLE
       })
-      .addCase(deleteAccount.rejected, (state, action) => {
+      .addCase('auth/deleteAccount/rejected', (state, action) => {
         state.error = action.payload
       })
   }
