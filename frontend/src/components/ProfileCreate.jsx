@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { createNewProfile, getProfile } from '../features/profiles/profileThunk'
 import { useNavigate } from 'react-router-dom'
@@ -7,26 +7,7 @@ import api from '../app/axios'
 const MAX_MB = 3
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp']
 
-// Normalize and deduplicate skill strings
-const normalizeSkills = (raw) => {
-  if (!raw) return ''
-  const tokens = String(raw)
-    .split(/[,\n;|/\\\s]+/g)
-    .map((t) => t.trim())
-    .filter(Boolean)
-
-  const seen = new Set()
-  const result = []
-  for (const t of tokens) {
-    const key = t.toLowerCase()
-    if (!seen.has(key)) {
-      seen.add(key)
-      result.push(t)
-    }
-  }
-  return result.join(', ')
-}
-
+    
 const ProfileCreate = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -38,7 +19,6 @@ const ProfileCreate = () => {
   const [city, setCity] = useState('')
   const [about, setAbout] = useState('')
   const [avatar_url, setAvatarUrl] = useState('')
-  const [skills, setSkills] = useState('')
   const [hourly_rate, setHourlyRate] = useState('')
 
   const [file, setFile] = useState(null)
@@ -48,6 +28,8 @@ const ProfileCreate = () => {
   const [submitting, setSubmitting] = useState(false)
   const { user } = useSelector((s) => s.auth);
   const isWorker = user?.role === 'worker';
+  const [availableSkills, setAvailableSkills ] = useState([])
+  const [selectedSkills, setSelectedSkills] = useState([])
 
   const triggerPickFile = () => fileInputRef.current?.click()
 
@@ -85,7 +67,7 @@ const ProfileCreate = () => {
     setLocalError('')
     setSubmitting(true)
 
-    const skillsStr = normalizeSkills(skills)
+    const skillsStr = selectedSkills.join(', ')
     const hourly = hourly_rate === '' ? null : Number(hourly_rate)
 
     try {
@@ -127,6 +109,10 @@ const ProfileCreate = () => {
       setSubmitting(false)
     }
   }
+
+  useEffect(() => {
+    api.get('/skills').then(res => setAvailableSkills (res.data.skills))
+  }, [])
 
   return (
     <div className="max-w-lg mx-auto mt-10">
@@ -208,15 +194,24 @@ const ProfileCreate = () => {
 
             {isWorker && (
               <>
-                <input
-                  type="text"
-                  placeholder="Skills (comma separated)"
-                  className="input input-bordered w-full"
-                  value={skills}
-                  onChange={(e) => setSkills(e.target.value)}
-                  onBlur={(e) => setSkills(normalizeSkills(e.target.value))}
-                />
-
+              <div className="flex flex-wrap gap-2">
+                {availableSkills.map((skill) => (
+                  <label key={skill.id} className="flex items-center gap-1 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectedSkills.includes(skill.name)}
+                      onChange={() => {
+                        setSelectedSkills(prev =>
+                          prev.includes(skill.name)
+                            ? prev.filter(s => s !== skill.name)
+                            : [...prev, skill.name]
+                        )
+                      }}
+                    />
+                    {skill.name}
+                  </label>
+                ))}
+              </div>
                 <input
                   type="number"
                   placeholder="Hourly rate"
