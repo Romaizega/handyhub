@@ -194,7 +194,7 @@ const ProfileCreate = () => {
 
             {isWorker && (
               <>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto border rounded p-2">
                 {availableSkills.map((skill) => (
                   <label key={skill.id} className="flex items-center gap-1 cursor-pointer">
                     <input
