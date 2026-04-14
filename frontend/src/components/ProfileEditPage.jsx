@@ -7,29 +7,12 @@ import api from '../app/axios';
 const MAX_MB = 3;
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
 
-const normalizeSkills = (raw) => {
-  if (!raw) return '';
-  const tokens = String(raw)
-    .split(/[,\n;|/\\\s]+/g)
-    .map((t) => t.trim())
-    .filter(Boolean);
-
-  const seen = new Set();
-  const result = [];
-  for (const t of tokens) {
-    const key = t.toLowerCase();
-    if (!seen.has(key)) {
-      seen.add(key);
-      result.push(t);
-    }
-  }
-  return result.join(', ');
-};
-
 const ProfileEdit = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { profile, status } = useSelector((s) => s.profile);
+  const [availableSkills, setAvailableSkills ] = useState([])
+  const [selectedSkills, setSelectedSkills] = useState([])
 
   const fileInputRef = useRef(null);
 
@@ -38,7 +21,6 @@ const ProfileEdit = () => {
     city: '',
     about: '',
     avatar_url: '',
-    skills: '',
     hourly_rate: '',
   });
 
@@ -57,11 +39,12 @@ const ProfileEdit = () => {
         city: profile.city || '',
         about: profile.about || '',
         avatar_url: profile.avatar_url || '',
-        skills: Array.isArray(profile.skills)
-          ? profile.skills.join(', ')
-          : profile.skills || '',
         hourly_rate: profile.hourly_rate ?? '',
       });
+        const existing = profile.skills
+      ? profile.skills.split(',').map(s => s.trim())
+      : []
+    setSelectedSkills(existing)
     }
   }, [profile]);
 
@@ -105,7 +88,7 @@ const ProfileEdit = () => {
     setLocalError('');       
     setSubmitting(true);            
 
-    const skillsStr = normalizeSkills(form.skills);
+    const skillsStr = selectedSkills.join(', ')
     const hourly = form.hourly_rate === '' ? null : Number(form.hourly_rate);
 
     try {
@@ -146,6 +129,11 @@ const ProfileEdit = () => {
       setSubmitting(false);       
     }
   };
+    
+  useEffect(() => {
+    api.get('/skills').then(res => setAvailableSkills (res.data.skills))
+  }, [])
+
 
   return (
     <div className="max-w-lg mx-auto mt-10">
@@ -223,6 +211,26 @@ const ProfileEdit = () => {
                 </>
               )}
             </div>
+                {isWorker && (
+                <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto border rounded p-2">
+                {availableSkills.map((skill) => (
+                  <label key={skill.id} className="flex items-center gap-1 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectedSkills.includes(skill.name)}
+                      onChange={() => {
+                        setSelectedSkills(prev =>
+                          prev.includes(skill.name)
+                            ? prev.filter(s => s !== skill.name)
+                            : [...prev, skill.name]
+                        )
+                      }}
+                    />
+                    {skill.name}
+                  </label>
+                  ))}
+                </div>
+                )}
 
             {localError && (
               <p className="text-red-500 text-sm">{localError}</p>
@@ -230,20 +238,7 @@ const ProfileEdit = () => {
 
            {isWorker && (
             <>
-            <input
-              name="skills"
-              value={form.skills}
-              onChange={handleChange}
-              onBlur={(e) =>
-                setForm((prev) => ({
-                  ...prev,
-                  skills: normalizeSkills(e.target.value),
-                }))
-              }
-              placeholder="Skills (comma or space separated)"
-              className="input input-bordered w-full"
-            />
-
+          
             <input
               type="number"
               name="hourly_rate"
