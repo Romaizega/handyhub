@@ -99,11 +99,25 @@ const updatePassword = createAsyncThunk(
 );
 
 
+const verifyEmail = createAsyncThunk(
+  'auth/verifyCode',
+  async ({email, code}, {rejectWithValue}) => {
+    try {
+      const {data} = await api.post('/auth/verify', {email, code});
+      return data
+  
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to confirm code');
+    }
+  }
+)
+
 export {
   registerUser,
   loginUser, 
   logoutUser,
   updateEmail,
   updatePassword,
-  deleteAccount
+  deleteAccount,
+  verifyEmail
 }

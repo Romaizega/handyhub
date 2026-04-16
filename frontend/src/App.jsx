@@ -28,6 +28,7 @@ import HeroWelcome from './components/Welcome'
 import WorkerCommentsPage from './components/WorkerCommentsPage'
 import CreateCommentPage from './components/CreateCommentPage'
 import AdminUsers from './components/AdminUsers'
+import VerifyEmail from './components/VerifyEmail'
 
 
 function App() { 
@@ -39,6 +40,7 @@ function App() {
         <Route path="/" element={<HeroWelcome />} />
         <Route path="/home" element={<Home />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/verify" element={<VerifyEmail/>}/>
         <Route path="/login" element={<Login />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/chooseworker" element={<HowToChooseWorker />} />

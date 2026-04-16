@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux"
-import { registerUser, loginUser } from "../features/auth/authThunk"
+import { registerUser } from "../features/auth/authThunk"
 import { useState, useMemo } from "react"
 import { useNavigate } from "react-router-dom";
 
@@ -65,12 +65,6 @@ const Register = () => {
         role
       })).unwrap();
 
-      await dispatch(loginUser({
-        username: username.trim(),
-        password,
-        skipProfileCheck: true
-      })).unwrap();
-
       setUsername('');
       setEmail('');
       setPassword('');
@@ -79,7 +73,7 @@ const Register = () => {
       setAccepted(false);
       setLocalError(null);
 
-      navigate('/profile/create', { replace: true });
+      navigate('/verify', { state: {email: email.trim()} });
     } catch (error) {
       setLocalError(String(error || 'Registration failed'));
     }
@@ -137,7 +131,7 @@ const Register = () => {
                     type="button"
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-blue-500 hover:underline"
                     onClick={() => setShowPassword((prev) => !prev)}
-                  >
+                >
                     {showPassword ? "Hide" : "Show"}
                   </button>
                 </label>
