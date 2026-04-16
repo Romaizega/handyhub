@@ -7,7 +7,9 @@ const {
   refreshAccessToken,
   changeEmail,
   changePassword,
-  deleteAccount 
+  deleteAccount,
+  verifyCde
+   
 } = require('../controllers/auth_controller')
 const authenticateJWT = require('../middleware/auth_middware')
 
@@ -28,6 +30,8 @@ router.patch('/email',authenticateJWT, changeEmail)
 router.patch('/password',authenticateJWT, changePassword)
 // Delete authenticated user's account
 router.delete('/me', authenticateJWT, deleteAccount)
+// Post verification code
+router.post('/verify', verifyCde)
 
 module.exports = router
 
