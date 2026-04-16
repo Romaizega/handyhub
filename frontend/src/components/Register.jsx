@@ -73,7 +73,7 @@ const Register = () => {
       setAccepted(false);
       setLocalError(null);
 
-      navigate('/verify', { state: {email: email.trim()} });
+      navigate('/verify', { state: {email: email.trim(), username: username.trim(), password} });
     } catch (error) {
       setLocalError(String(error || 'Registration failed'));
     }
