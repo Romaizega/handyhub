@@ -1,3 +1,4 @@
+const { useActionState } = require('react');
 const db = require('../db/db')
 
 // Get user by ID
@@ -77,6 +78,23 @@ const deleteUser = async (userId) => {
   return db('users').where({ id: userId }).del();
 }
 
+// Verification code
+const updateVerification = async (userId, code, expireAt) => {
+  return db('users')
+    .where({id: userId})
+    .update({verification_code: code, code_expires_at: expireAt})
+}
+
+const clearVerification = async (userId) => {
+  return db('users')
+    .where({id: userId})
+    .update({
+      is_verified: true,
+      verification_code: null,
+      code_expires_at: null
+    })
+}
+
 module.exports = {
   getUserById,
   getAllUsers,
@@ -86,5 +104,7 @@ module.exports = {
   getUsersPaged,
   updateEmail,
   updatePassword,
-  deleteUser
+  deleteUser,
+  updateVerification,
+  clearVerification
 }

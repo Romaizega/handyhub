@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 const userModel = require('../models/users_model');
+const { sendVerificationEmail } = require('../utils/emailService')
 
 // Registers a new user after validating input and checking uniqueness
 const register = async (req, res) => {
@@ -35,6 +36,11 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10)
 
     const newUser = await userModel.createUser(username, email, hashedPassword, role)
+    const code = Math.floor(100000 + Math.random() * 900000)
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
+    await userModel.updateVerification(newUser.id, code, expiresAt)
+    await sendVerificationEmail(email, code)
+
     res.status(200).json({
       message: "New user created successfully",
       user: {id: newUser.id, username: newUser.username, email: newUser.email, role: newUser.role}
@@ -209,6 +215,22 @@ const deleteAccount = async (req, res) => {
   }
 };
 
+// Compare verification code
+const verifyCde = async(req, res) => {
+  const {email, code} = req.body
+  try {
+    const existingEmail = await userModel.getUserByEmail(email);
+    if (!existingEmail) return res.status(400).json({ message: "Email is not found" })
+    if(Date.now() > existingEmail.code_expires_at)
+      return res.status(400).json({message:"Verification code is expired "})
+    if(Number(code) !== existingEmail.verification_code)
+        return res.status(400).json({message: "Wrong verification code"})
+    await userModel.clearVerification(existingEmail.id)
+    return res.status(200).json({message:"Verification code is correct"})
+  } catch (error) {
+    res.status(500).json({message:"Server error", error: error.message})
+  }
+}
 
 module.exports = {
   register,
@@ -219,5 +241,6 @@ module.exports = {
   getUsersPaged,
   changePassword,
   changeEmail,
-  deleteAccount
+  deleteAccount,
+  verifyCde
 }
