@@ -77,10 +77,15 @@ const deleteProfile = (user_id) => {
   return db('profiles').where({user_id}).del()
 }
 
+const getProfileById = (id) => {
+  return db('profiles').where({id}).first()
+}
+
 module.exports = {
   getProfileByUserId,
   getAllProfiles,
   createProfile,
   updateProfile,
-  deleteProfile
+  deleteProfile,
+  getProfileById
 }

@@ -63,7 +63,7 @@ const createCommentController = async (req, res) => {
       return res.status(404).json({ message: "Offer not found" });
     }
 
-    const workerProfile = await profileModel.getProfileByUserId(offer.worker_profile_id);
+    const workerProfile = await profileModel.getProfileById(offer.worker_profile_id);
     if (!workerProfile) {
       return res.status(404).json({ message: "Worker profile not found" });
     }
