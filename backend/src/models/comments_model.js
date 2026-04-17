@@ -6,11 +6,12 @@ const getAllComments = () => {
   .orderBy('created_at', 'desc')
 }
 
-const getCommentByWorkerId = (workerId) => {
+const getCommentByWorkerId = (userId) => {
   return db('comments')
-  .where({worker_profile_id: workerId})
-  .select('*')
-  .orderBy('created_at', 'desc')
+    .join('profiles', 'comments.worker_profile_id', 'profiles.id')
+    .where('profiles.user_id', userId)
+    .select('comments.*')
+    .orderBy('comments.created_at', 'desc')
 }
 
 const createComment = async (
