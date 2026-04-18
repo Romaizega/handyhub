@@ -1,7 +1,10 @@
 # 🛠️ HandyHub
 
+🌐 **Live Demo:** [handyhub.izegov.dev](https://handyhub.izegov.dev)
+
 **HandyHub** is a full-stack platform for posting and finding home service jobs.  
 Clients can create tasks (plumbing, cleaning, moving, etc.), while workers browse and apply for them.  
+
 
 Built with **React + Redux Toolkit + Vite + Tailwind/DaisyUI** on the frontend and **Node.js + Express + PostgreSQL (Knex)** on the backend.
 
@@ -19,8 +22,37 @@ Built with **React + Redux Toolkit + Vite + Tailwind/DaisyUI** on the frontend a
 -  **AI Assistant (OpenAI)**: generates job titles and descriptions from photos
 -  Filtering by categories and search
 -  Dockerized setup (Postgres + API + Frontend)
+-  Email verification
+-  Admin panel
+-  Worker skills from database
+-  Rating & reviews system
+-  CI/CD with GitHub Actions
+-  AWS deployment with Docker
+
+
 
 ---
+
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React, Redux Toolkit, Vite, Tailwind CSS, DaisyUI |
+| Backend | Node.js, Express, Socket.IO |
+| Database | PostgreSQL, Knex.js |
+| Auth | JWT, Refresh tokens, bcrypt |
+| AI | OpenAI API |
+| DevOps | Docker, GitHub Actions, AWS EC2, nginx |
+| SSL | Let's Encrypt |
+
+## 🚀 Deployment
+
+- **Cloud:** AWS EC2 (t3.micro)
+- **Containers:** Docker + Docker Compose
+- **Reverse proxy:** nginx
+- **SSL:** Let's Encrypt (auto-renewal)
+- **CI/CD:** GitHub Actions → SSH deploy on push to main
+- **Domain:** [handyhub.izegov.dev](https://handyhub.izegov.dev)
 
 ##  Screenshots
 
@@ -147,7 +179,8 @@ planned_features:
       - [x] Authentication & profiles
       - [x] Account settings (email, password, delete)
       - [ ] Two-factor authentication (2FA)
-      - [ ] User reviews & ratings
+      - [x] User reviews & ratings
+      - [x] Email verification
   - Jobs:
       - [x] CRUD operations with photo uploads
       - [ ] Job categories & tagging improvements
@@ -161,8 +194,8 @@ planned_features:
       - [ ] PayPal integration
   - Infrastructure:
       - [x] Dockerized setup
-      - [ ] CI/CD with GitHub Actions
-      - [ ] Production deployment with Kubernetes
+      - [x] CI/CD with GitHub Actions
+      - [x] Production deployment AWS
 
 ```
 
